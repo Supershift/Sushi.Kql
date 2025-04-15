@@ -9,18 +9,18 @@ namespace Sushi.Kql
 {
     public class ParameterCollection
     {
-        private readonly Dictionary<string, Parameter> _parameters = [];
+        private readonly Dictionary<string, KqlParameter> _parameters = [];
 
-        public string Add(KqlDataType kqlDataType, object? value)
+        public string Add(KqlDataType KqlDataType, object? value)
         {
             string parameterName = $"p{_parameters.Keys.Count}";
-            var parameter = new Parameter(kqlDataType, parameterName, value);
+            var parameter = new KqlParameter(KqlDataType, parameterName, value);
             _parameters.Add(parameter.Name, parameter);
 
             return parameterName;
         }
 
-        public IEnumerable<Parameter> GetParameters()
+        public IEnumerable<KqlParameter> GetParameters()
         {
             return _parameters.Values;
         }

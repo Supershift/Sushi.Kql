@@ -24,7 +24,7 @@ namespace Sushi.Kql
             builder.Append("| summarize ");
         }
 
-        public SummarizeBuilder<T> Count(string? alias = null) 
+        public SummarizeBuilder<T> Count(string? alias = null)
         {
             return Add(new CountFunction(alias));
         }
@@ -54,7 +54,7 @@ namespace Sushi.Kql
             else
                 _builder.Append(", ");
 
-            _builder.Append(customKql);            
+            _builder.Append(customKql);
             return this;
         }
 

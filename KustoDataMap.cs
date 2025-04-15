@@ -1,17 +1,17 @@
-﻿using System.Data;
-using System.Data.SqlTypes;
-using System.Linq.Expressions;
-using Kusto.Cloud.Platform.Data;
+﻿using Kusto.Cloud.Platform.Data;
 using Kusto.Data.Common;
 using Kusto.Ingest;
 using Sushi.MicroORM.Mapping;
+using System.Data;
+using System.Data.SqlTypes;
+using System.Linq.Expressions;
 
 namespace Sushi.Kql;
 
 /// <summary>
 /// Represents the mapping between ADX table and code objects.
 /// </summary>
-public abstract class KustoDataMap<T>
+public abstract class DataMap<T>
 {
     /// <summary>
     /// Name of the ADX table

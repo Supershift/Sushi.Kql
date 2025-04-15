@@ -1,7 +1,7 @@
-﻿using System.Text.Json;
-using Kusto.Data.Common;
+﻿using Kusto.Data.Common;
 using Kusto.Ingest;
 using Sushi.MicroORM;
+using System.Text.Json;
 
 namespace Sushi.Kql;
 
@@ -14,7 +14,7 @@ public static class KustoExtensions
         this IKustoIngestClient ingestClient,
         string database,
         T item,
-        KustoDataMap<T> mapping
+        DataMap<T> mapping
     )
     {
         var ingestionProperties = new KustoQueuedIngestionProperties(database, mapping.TableName)
@@ -36,7 +36,7 @@ public static class KustoExtensions
         this IKustoIngestClient ingestClient,
         string database,
         IEnumerable<T> items,
-        KustoDataMap<T> mapping
+        DataMap<T> mapping
     )
     {
         var ingestionProperties = new KustoQueuedIngestionProperties(database, mapping.TableName)
@@ -59,7 +59,7 @@ public static class KustoExtensions
         this ICslQueryProvider queryProvider,
         string database,
         KustoQuery<T> query,
-        KustoDataMap<T> mapping,
+        DataMap<T> mapping,
         CancellationToken cancellationToken
     )
     {

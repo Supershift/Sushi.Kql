@@ -1,5 +1,8 @@
-﻿using System.Collections;
+﻿using Newtonsoft.Json.Linq;
+using Sushi.MicroORM;
+using System.Collections;
 using System.Data;
+using System.Data.Common;
 using System.Linq.Expressions;
 using System.Text;
 
@@ -42,8 +45,8 @@ namespace Sushi.Kql
         public WhereBuilder<T> Between(Expression<Func<T, object?>> mappingExpression, object? from, object? to)
         {
             var dataProperty = _map.GetDataProperty(mappingExpression);
-            var fromParameter = _parameters.Add(dataProperty.DataType, from);
-            var toParameter = _parameters.Add(dataProperty.DataType, to);
+            var fromParameter = _parameters.Add(dataProperty.SqlType, from);
+            var toParameter = _parameters.Add(dataProperty.SqlType, to);
             return AddKql($"{dataProperty.Column} between ({fromParameter}..{toParameter})");
         }
 
@@ -54,7 +57,7 @@ namespace Sushi.Kql
         {
             var dataproperty = _map.GetDataProperty(mappingExpression);
 
-            return Add(dataproperty.Column, dataproperty.DataType, value, comparisonOperator);
+            return Add(dataproperty.Column, dataproperty.SqlType, value, comparisonOperator);
         }
 
         /// <summary>
