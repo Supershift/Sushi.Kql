@@ -10,12 +10,12 @@ namespace Sushi.Kql
     /// <typeparam name="T"></typeparam>
     public class SummarizeBuilder<T>
     {
-        private readonly KustoDataMap<T> _map;
+        private readonly DataMap<T> _map;
         private readonly StringBuilder _builder;
         private readonly ParameterCollection _parameters;
         private bool _isFirst;
 
-        internal SummarizeBuilder(KustoDataMap<T> map, StringBuilder builder, ParameterCollection parameters)
+        internal SummarizeBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters)
         {
             _map = map;
             _builder = builder;

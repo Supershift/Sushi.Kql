@@ -1,10 +1,7 @@
 ﻿using System.Collections;
 using System.Data;
-using System.Data.Common;
 using System.Linq.Expressions;
 using System.Text;
-using Newtonsoft.Json.Linq;
-using Sushi.MicroORM;
 
 namespace Sushi.Kql
 {
@@ -14,12 +11,12 @@ namespace Sushi.Kql
     /// <typeparam name="T"></typeparam>
     public class WhereBuilder<T>
     {
-        private readonly KustoDataMap<T> _map;
+        private readonly DataMap<T> _map;
         private readonly StringBuilder _builder;
         private readonly ParameterCollection _parameters;
         private bool _isFirst = true;
 
-        internal WhereBuilder(KustoDataMap<T> map, StringBuilder builder, ParameterCollection parameters)
+        internal WhereBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters)
         {
             _map = map;
             _builder = builder;
@@ -45,8 +42,8 @@ namespace Sushi.Kql
         public WhereBuilder<T> Between(Expression<Func<T, object?>> mappingExpression, object? from, object? to)
         {
             var dataProperty = _map.GetDataProperty(mappingExpression);
-            var fromParameter = _parameters.Add(dataProperty.SqlType, from);
-            var toParameter = _parameters.Add(dataProperty.SqlType, to);
+            var fromParameter = _parameters.Add(dataProperty.DataType, from);
+            var toParameter = _parameters.Add(dataProperty.DataType, to);
             return AddKql($"{dataProperty.Column} between ({fromParameter}..{toParameter})");
         }
 
@@ -57,7 +54,7 @@ namespace Sushi.Kql
         {
             var dataproperty = _map.GetDataProperty(mappingExpression);
 
-            return Add(dataproperty.Column, dataproperty.SqlType, value, comparisonOperator);
+            return Add(dataproperty.Column, dataproperty.DataType, value, comparisonOperator);
         }
 
         /// <summary>
@@ -76,7 +73,7 @@ namespace Sushi.Kql
             return this;
         }
 
-        private WhereBuilder<T> Add(string column, SqlDbType sqlType, object? value, ComparisonOperator comparisonOperator)
+        private WhereBuilder<T> Add(string column, KqlDataType sqlType, object? value, ComparisonOperator comparisonOperator)
         {
             if (comparisonOperator == ComparisonOperator.In)
             {
@@ -98,7 +95,7 @@ namespace Sushi.Kql
             }
         }
 
-        private WhereBuilder<T> AddWhereIn(string column, SqlDbType sqlType, object? value)
+        private WhereBuilder<T> AddWhereIn(string column, KqlDataType sqlType, object? value)
         {
             if (value is not IEnumerable items)
             {

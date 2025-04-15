@@ -1,8 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
-using Newtonsoft.Json.Linq;
 using Sushi.Kql.Operators;
-using Swashbuckle.AspNetCore.SwaggerGen;
 
 namespace Sushi.Kql
 {
@@ -12,12 +10,12 @@ namespace Sushi.Kql
     /// <typeparam name="T"></typeparam>
     public class SelectBuilder<T>
     {
-        private readonly KustoDataMap<T> _map;
+        private readonly DataMap<T> _map;
         private readonly StringBuilder _builder;
         private readonly ParameterCollection _parameters;
         private bool _isFirst;
 
-        internal SelectBuilder(KustoDataMap<T> map, StringBuilder builder, ParameterCollection parameters)
+        internal SelectBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters)
         {
             _map = map;
             _builder = builder;
