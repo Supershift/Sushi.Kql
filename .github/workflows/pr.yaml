@@ -28,12 +28,12 @@ jobs:
 
       - name: Test
              # run: dotnet test --no-build --verbosity normal
-        run: dotnet test --configuration Release --verbosity normal --logger trx --collect:"XPlat Code Coverage"
+        run: dotnet test --no-build --verbosity normal --collect:"XPlat Code Coverage" --logger trx --results-directory coverage
       
-      - name: Merge Coverage Reports
+      - name: Install Coverage Report Generator
         run: dotnet tool install -g dotnet-reportgenerator-globaltool
 
-      - name: Generate Merged Coverage Report
+      - name: Generate Coverage Report
         run: reportgenerator "-reports:coverage/**/coverage.cobertura.xml" "-targetdir:mergedcoveragereport" "-reporttypes:Html;Cobertura"
 
       - name: Code Coverage Summary Report
