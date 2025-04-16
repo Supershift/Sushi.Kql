@@ -3,7 +3,11 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sushi.Kql", "Sushi.Kql\Sushi.Kql.csproj", "{4FE36607-57CD-4711-85AC-11728ECC4984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql", "Sushi.Kql\Sushi.Kql.csproj", "{4FE36607-57CD-4711-85AC-11728ECC4984}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sushi.Kql.UnitTests", "..\tests\Sushi.Kql.UnitTests\Sushi.Kql.UnitTests.csproj", "{4DF53EB1-7624-4DF4-9272-9AAB28C41066}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3E4F4763-14DF-48C6-8014-65C3778A432D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,9 +19,16 @@ Global
 		{4FE36607-57CD-4711-85AC-11728ECC4984}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4FE36607-57CD-4711-85AC-11728ECC4984}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4FE36607-57CD-4711-85AC-11728ECC4984}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4DF53EB1-7624-4DF4-9272-9AAB28C41066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4DF53EB1-7624-4DF4-9272-9AAB28C41066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4DF53EB1-7624-4DF4-9272-9AAB28C41066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4DF53EB1-7624-4DF4-9272-9AAB28C41066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4DF53EB1-7624-4DF4-9272-9AAB28C41066} = {3E4F4763-14DF-48C6-8014-65C3778A432D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {87F78B9F-DB97-41C9-9B93-3438C37AD2C2}
