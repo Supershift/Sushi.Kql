@@ -35,6 +35,9 @@ jobs:
       - name: Generate Coverage Report
         run: reportgenerator "-reports:coverage/**/coverage.cobertura.xml" "-targetdir:mergedcoveragereport" "-reporttypes:Cobertura"
 
+      - name: List files
+        run: ls -R
+
       - name: Code Coverage Summary Report
         uses: irongut/CodeCoverageSummary@v1.3.0
         with:
