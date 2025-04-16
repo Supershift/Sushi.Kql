@@ -16,7 +16,7 @@ jobs:
           dotnet-version: 8.0.x
 
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore src/Sushi.Kql.sln
 
       - name: Build
         run: dotnet build src/Sushi.Kql.sln --no-restore
