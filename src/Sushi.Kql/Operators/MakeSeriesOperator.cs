@@ -51,8 +51,8 @@ namespace Sushi.Kql.Operators
 
         public string ToKql(ParameterCollection parameters)
         {
-            var start = parameters.Add(SqlDbType.DateTime, Start);
-            var end = parameters.Add(SqlDbType.DateTime, End);
+            var start = parameters.Add(KqlDataType.DateTime, Start);
+            var end = parameters.Add(KqlDataType.DateTime, End);
             return $"make-series {(NonEmptyKind ? "kind=nonempty" : "")} {Aggregation.ToKql(parameters)} default = 0 on {OnColumn} from {start} to {end} step {Step}";
         }
     }
