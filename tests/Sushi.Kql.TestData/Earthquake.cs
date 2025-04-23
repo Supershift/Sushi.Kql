@@ -1,4 +1,4 @@
-﻿namespace Sushi.Kql.UnitTests.Fixture;
+﻿namespace Sushi.Kql.UnitTests;
 public class Earthquake
 {
     public DateTime Timestamp { get; set; }

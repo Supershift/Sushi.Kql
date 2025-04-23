@@ -1,7 +1,4 @@
-﻿using Sushi.Kql.UnitTests.Fixture;
-using Sushi.Kql.UnitTests.Mocks;
-
-namespace Sushi.Kql.UnitTests;
+﻿namespace Sushi.Kql.UnitTests;
 public class DataMapTest
 {
     [Fact]
