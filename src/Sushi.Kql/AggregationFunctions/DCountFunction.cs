@@ -7,11 +7,11 @@ using Sushi.Kql.Operators;
 
 namespace Sushi.Kql.AggregationFunctions;
 
-public class DistinctCountFunction : IAggregationFunction
+public class DCountFunction : IAggregationFunction
 {
     private readonly string? _alias;
 
-    public DistinctCountFunction(string column, string? alias = null, int? accuracy = null)
+    public DCountFunction(string column, string? alias = null, int? accuracy = null)
     {
         Column = column;
         _alias = alias;

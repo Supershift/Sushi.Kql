@@ -10,9 +10,9 @@ public class AggregateFactory<T>
         _map = map;
     }
 
-    public IAggregationFunction DistinctCount(Expression<Func<T, object?>> on, string alias, int? accuracy = null)
+    public IAggregationFunction DCount(Expression<Func<T, object?>> on, string alias, int? accuracy = null)
     {
         var mapItem = _map.GetDataProperty(on);
-        return new DistinctCountFunction(mapItem.Column, alias, accuracy);
+        return new DCountFunction(mapItem.Column, alias, accuracy);
     }
 }

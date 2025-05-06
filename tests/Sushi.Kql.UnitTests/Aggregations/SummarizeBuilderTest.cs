@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Sushi.Kql.AggregationFunctions;
 
-namespace Sushi.Kql.AggregationFunctions;
-internal static class Sample
+namespace Sushi.Kql.UnitTests.Aggregations;
+internal class SummarizeBuilderTest
 {
     private record Something
     {
@@ -25,21 +26,15 @@ internal static class Sample
         }
     }
 
-    internal static void DoIt()
+    internal static void SummarizeOnSingle()
     {
         var qb = new KqlQueryBuilder<Something>(new SomethingMap());
-        qb.Summarize(Aggs.DistinctCount<Something>(x => x.Name, "name"), Aggs.DistinctCount<Something>(x => x.Name, "name")).By(x => x.Age);
+        qb.Summarize().On(a => a.DCount(x => x.Name, "name")).By(x => x.Age);
     }
 
-    internal static void DoIt2()
+    internal static void SummarizeOnMultiple()
     {
         var qb = new KqlQueryBuilder<Something>(new SomethingMap());
-        qb.Summarize().On(a => a.DistinctCount(x => x.Name, "name")).By(x => x.Age);
-    }
-
-    internal static void DoIt2B()
-    {
-        var qb = new KqlQueryBuilder<Something>(new SomethingMap());
-        qb.Summarize().On(a => [a.DistinctCount(x => x.Name, "name"), a.DistinctCount(x=>x.Id, "id")]).By(x => x.Age);
+        qb.Summarize().On(a => [a.DCount(x => x.Name, "name"), a.DCount(x => x.Id, "id")]).By(x => x.Age);
     }
 }
