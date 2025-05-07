@@ -5,11 +5,12 @@ using Kusto.Ingest;
 
 namespace Sushi.Kql;
 
-public class DataMapItem
+public record DataMapItem
 {
-    public string[] Path { get; set; } = [];
-    public string Column { get; set; } = string.Empty;
-    public KqlDataType DataType { get; set; } = KqlDataType.String;
+    public required string[] Path { get; set; }
+    public required string Column { get; set; }
+    public required KqlDataType DataType { get; set; }
+    public required Type MemberType { get; set; }
 }
 
 /// <summary>
@@ -19,7 +20,7 @@ public abstract class DataMap<T>
 {
     public abstract string TableName { get; }
 
-    private readonly Dictionary<string, DataMapItem> _columnMapping = [];
+    public readonly Dictionary<string, DataMapItem> Items = [];
 
     public IngestionMapping IngestionMapping => new() { IngestionMappings = InternalMappings };
     private List<ColumnMapping> InternalMappings { get; set; } = [];
@@ -38,11 +39,12 @@ public abstract class DataMap<T>
         // add column mapping
         var propertyKey = GetPropertyKey(path);
         var memberType = ReflectionHelper.GetMemberType(memberTree.Pop());
-        _columnMapping[propertyKey] = new DataMapItem()
+        Items[propertyKey] = new DataMapItem()
         {
             Column = columnName,
             Path = path,
             DataType = Utility.GetKqlDataType(memberType),
+            MemberType = memberType,
         };
 
         // add ingestion mapping
@@ -60,7 +62,7 @@ public abstract class DataMap<T>
         var memberTree = ReflectionHelper.GetMemberTree(expression);
         var path = memberTree.Select(x => x.Name).ToArray();
         var propertyKey = GetPropertyKey(path);
-        if (_columnMapping.TryGetValue(propertyKey, out var item))
+        if (Items.TryGetValue(propertyKey, out var item))
         {
             return item;
         }
@@ -76,7 +78,7 @@ public abstract class DataMap<T>
         var memberTree = ReflectionHelper.GetMemberTree(memberExpression);
         var path = memberTree.Select(x => x.Name).ToArray();
         var propertyKey = GetPropertyKey(path);
-        if (_columnMapping.TryGetValue(propertyKey, out var item))
+        if (Items.TryGetValue(propertyKey, out var item))
         {
             return item;
         }
