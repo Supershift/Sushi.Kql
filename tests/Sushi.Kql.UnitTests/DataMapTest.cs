@@ -39,6 +39,15 @@ public class DataMapTest
         Assert.Equal("$.Location.Longitude", ingestionMappings.Single(x => x.ColumnName == "Lng").Properties["Path"]);
     }
 
+    [Fact]
+    public void GetDataProperty_InvalidExpression_ThrowsArgumentException()
+    {
+        var map = new NoDefinedMappings();
+
+        Assert.Throws<ArgumentException>(() => map.GetDataProperty(x => x.Timestamp));
+    }
+
+
     public class DefaultColumnMapping : DataMap<Earthquake>
     {
         public override string TableName => "Earthquakes";
@@ -66,4 +75,10 @@ public class DataMapTest
             Map(x => x.Location.Longitude, "Lng");
         }
     }
+
+    public class NoDefinedMappings : DataMap<Earthquake>
+    {
+        public override string TableName => "Earthquakes";
+    }
+
 }
