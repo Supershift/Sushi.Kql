@@ -139,9 +139,8 @@ public class ResultMapperTest
         var dataMap = new EarthquakeMap();
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => ResultMapper.MapRowToObject(mockReader, dataMap, null));
+        Assert.Throws<ArgumentNullException>(() => ResultMapper.MapRowToObject(mockReader, dataMap!, null));
     }
-
 
     public class EarthquakeMap : DataMap<Earthquake>
     {
@@ -169,6 +168,7 @@ public class ResultMapperTest
             Map(x => x.Location);
         }
     }
+
 }
 
 

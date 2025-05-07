@@ -28,8 +28,10 @@ public static class ResultMapper
 
     internal static void MapRowToObject<T>(IDataReader reader, DataMap<T> map, T instance)
     {
-        if (instance == null)
+        if (EqualityComparer<T>.Default.Equals(instance, default))
+        {
             throw new ArgumentNullException(nameof(instance));
+        }
 
         // for each mapped member on the instance, go through the result set and find a column with the expected name
         foreach (var item in map.Items.Values)
@@ -75,7 +77,7 @@ public static class ResultMapper
                         value = jtoken.ToObject(item.MemberType);
                     }
 
-                    ReflectionHelper.SetNestedProperty(instance, item.Path, value);
+                    ReflectionHelper.SetNestedProperty(instance!, item.Path, value);
                     break;
                 }
             }
