@@ -1,4 +1,6 @@
-﻿namespace Sushi.Kql.UnitTests;
+﻿using Sushi.Kql.TestData;
+
+namespace Sushi.Kql.UnitTests;
 public class DataMapTest
 {
     [Fact]
@@ -6,7 +8,7 @@ public class DataMapTest
     {
         var map = new DefaultColumnMapping();
 
-        Assert.Equal("Timestamp", map.GetDataProperty(x => x.Timestamp).Column);
+        Assert.Equal("Timestamp", map.GetDataProperty(x => x.TimeStamp).Column);
         Assert.Equal("Magnitude", map.GetDataProperty(x => x.Magnitude).Column);
         Assert.Equal("DepthInMeters", map.GetDataProperty(x => x.DepthInMeters).Column);
         Assert.Equal("Location_Latitude", map.GetDataProperty(x => x.Location.Latitude).Column);
@@ -25,7 +27,7 @@ public class DataMapTest
     {
         var map = new CustomColumnMapping();
 
-        Assert.Equal("Timestamp", map.GetDataProperty(x => x.Timestamp).Column);
+        Assert.Equal("Timestamp", map.GetDataProperty(x => x.TimeStamp).Column);
         Assert.Equal("Magnitude", map.GetDataProperty(x => x.Magnitude).Column);
         Assert.Equal("Depth", map.GetDataProperty(x => x.DepthInMeters).Column);
         Assert.Equal("Lat", map.GetDataProperty(x => x.Location.Latitude).Column);
@@ -45,7 +47,7 @@ public class DataMapTest
 
         public DefaultColumnMapping()
         {
-            Map(x => x.Timestamp);
+            Map(x => x.TimeStamp);
             Map(x => x.Magnitude);
             Map(x => x.DepthInMeters);
             Map(x => x.Location.Latitude);
@@ -59,7 +61,7 @@ public class DataMapTest
 
         public CustomColumnMapping()
         {
-            Map(x => x.Timestamp, "Timestamp");
+            Map(x => x.TimeStamp, "Timestamp");
             Map(x => x.Magnitude, "Magnitude");
             Map(x => x.DepthInMeters, "Depth");
             Map(x => x.Location.Latitude, "Lat");

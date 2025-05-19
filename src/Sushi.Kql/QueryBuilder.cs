@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using System.Text;
+using Sushi.Kql.AggregationFunctions;
 
 namespace Sushi.Kql;
 
@@ -70,10 +71,12 @@ public class QueryBuilder<T>
     public string Build()
     {
         // add parameters
-        var stringified = string.Join(", ", _parameters.GetParameters().Select(x => $"{x.Name}:{x.Type}"));
-
-        _builder.Insert(0, $"declare query_parameters({stringified});\n");
-
+        var parameters = _parameters.GetParameters();
+        if (parameters.Count > 0)
+        {
+            var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
+            _builder.Insert(0, $"declare query_parameters({stringified});\n");
+        }
         return _builder.ToString();
     }
 

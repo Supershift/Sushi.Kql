@@ -1,15 +1,15 @@
-﻿namespace Sushi.Kql.UnitTests;
-public class Earthquake
+﻿namespace Sushi.Kql.TestData;
+public record Earthquake
 {
-    public DateTime Timestamp { get; set; }
-    public float Magnitude { get; set; }
-    public int DepthInMeters { get; set; }
-    public Location Location { get; set; } = null!;
+    public required DateTime TimeStamp { get; set; }
+    public required double Magnitude { get; set; }
+    public required int DepthInMeters { get; set; }
+    public required Location Location { get; set; }
 
 }
 
-public class Location
+public record Location
 {
-    public float Latitude { get; set; }
-    public float Longitude { get; set; }
+    public required double Latitude { get; set; }
+    public required double Longitude { get; set; }
 }
