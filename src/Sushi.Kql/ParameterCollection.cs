@@ -20,7 +20,7 @@ namespace Sushi.Kql
             return parameterName;
         }
 
-        public IEnumerable<Parameter> GetParameters()
+        public IReadOnlyCollection<Parameter> GetParameters()
         {
             return _parameters.Values;
         }

@@ -1,23 +1,22 @@
 ﻿using System.Data;
 using System.Text;
-using Sushi.Kql.AggregationFunctions;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.AggregationFunctions;
 
 /// <summary>
 /// Builds a KQL query with a fluent API.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class QueryBuilder<T>
+public class KqlQueryBuilder<T>
 {
     private readonly DataMap<T> _map;
     private readonly StringBuilder _builder;
     private readonly ParameterCollection _parameters;
 
     /// <summary>
-    /// Creates a new instance of <see cref="QueryBuilder{T}"/>.
+    /// Creates a new instance of <see cref="KqlQueryBuilder{T}"/>.
     /// </summary>        
-    public QueryBuilder(DataMap<T> map)
+    public KqlQueryBuilder(DataMap<T> map)
     {
         _map = map;
         _builder = new StringBuilder(map.TableName);
@@ -25,30 +24,10 @@ public class QueryBuilder<T>
     }
 
     /// <summary>
-    /// Filters data from the table.
-    /// </summary>
-    /// <returns></returns>
-    public WhereBuilder<T> Where()
-    {
-        _builder.AppendLine();
-        return new WhereBuilder<T>(_map, _builder, _parameters);
-    }
-
-    /// <summary>
-    /// Selects data from the table.
-    /// </summary>
-    /// <returns></returns>
-    public SelectBuilder<T> Select()
-    {
-        _builder.AppendLine();
-        return new SelectBuilder<T>(_map, _builder, _parameters);
-    }
-
-    /// <summary>
     /// Groups and aggregates data.
     /// </summary>
     /// <returns></returns>
-    public SummarizeBuilder<T> Summarize()
+    public SummarizeBuilder<T> Summarize(params IAggregationFunction[] on)
     {
         _builder.AppendLine();
         return new SummarizeBuilder<T>(_map, _builder, _parameters);
@@ -71,12 +50,10 @@ public class QueryBuilder<T>
     public string Build()
     {
         // add parameters
-        var parameters = _parameters.GetParameters();
-        if (parameters.Count > 0)
-        {
-            var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
-            _builder.Insert(0, $"declare query_parameters({stringified});\n");
-        }
+        var stringified = string.Join(", ", _parameters.GetParameters().Select(x => $"{x.Name}:{x.Type}"));
+
+        _builder.Insert(0, $"declare query_parameters({stringified});\n");
+
         return _builder.ToString();
     }
 
