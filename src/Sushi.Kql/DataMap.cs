@@ -104,11 +104,10 @@ public abstract class DataMap<T>
     /// Gets the ingestion mapping for the mapped items.
     /// </summary>
     /// <returns></returns>
-    public List<ColumnMapping> GetIngestionMapping()
+    public IngestionMapping GetIngestionMapping()
     {
-        return Items.Values.Where(x => !x.IsReadOnly)
-            .Select(x => x.IngestionMapping)
-            .ToList();
+        var ingestionMapItems = Items.Values.Where(x => !x.IsReadOnly).Select(x => x.IngestionMapping).ToList();
+        return new IngestionMapping() { IngestionMappings = ingestionMapItems };
     }
 
     private static string BuildIngestionPath(string[] path)

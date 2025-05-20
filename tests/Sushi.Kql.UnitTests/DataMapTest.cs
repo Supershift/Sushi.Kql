@@ -13,11 +13,11 @@ public class DataMapTest
         Assert.Equal("Location_Longitude", map.GetItem(x => x.Location.Longitude).Column);
 
         var ingestionMappings = map.GetIngestionMapping();
-        Assert.Equal("$.Timestamp", ingestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
-        Assert.Equal("$.Magnitude", ingestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
-        Assert.Equal("$.DepthInMeters", ingestionMappings.Single(x => x.ColumnName == "DepthInMeters").Properties["Path"]);
-        Assert.Equal("$.Location.Latitude", ingestionMappings.Single(x => x.ColumnName == "Location_Latitude").Properties["Path"]);
-        Assert.Equal("$.Location.Longitude", ingestionMappings.Single(x => x.ColumnName == "Location_Longitude").Properties["Path"]);
+        Assert.Equal("$.Timestamp", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
+        Assert.Equal("$.Magnitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
+        Assert.Equal("$.DepthInMeters", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "DepthInMeters").Properties["Path"]);
+        Assert.Equal("$.Location.Latitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Location_Latitude").Properties["Path"]);
+        Assert.Equal("$.Location.Longitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Location_Longitude").Properties["Path"]);
     }
 
     [Fact]
@@ -32,12 +32,12 @@ public class DataMapTest
         Assert.Equal("Lng", map.GetItem(x => x.Location.Longitude).Column);
 
         var ingestionMappings = map.GetIngestionMapping();
-        Assert.Equal(5, ingestionMappings.Count);
-        Assert.Equal("$.Timestamp", ingestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
-        Assert.Equal("$.Magnitude", ingestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
-        Assert.Equal("$.DepthInMeters", ingestionMappings.Single(x => x.ColumnName == "Depth").Properties["Path"]);
-        Assert.Equal("$.Location.Latitude", ingestionMappings.Single(x => x.ColumnName == "Lat").Properties["Path"]);
-        Assert.Equal("$.Location.Longitude", ingestionMappings.Single(x => x.ColumnName == "Lng").Properties["Path"]);
+        Assert.Equal(5, ingestionMappings.IngestionMappings.Count());
+        Assert.Equal("$.Timestamp", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
+        Assert.Equal("$.Magnitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
+        Assert.Equal("$.DepthInMeters", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Depth").Properties["Path"]);
+        Assert.Equal("$.Location.Latitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Lat").Properties["Path"]);
+        Assert.Equal("$.Location.Longitude", ingestionMappings.IngestionMappings.Single(x => x.ColumnName == "Lng").Properties["Path"]);
     }
 
     [Fact]
