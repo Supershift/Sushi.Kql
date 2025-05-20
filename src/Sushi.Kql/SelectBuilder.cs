@@ -31,7 +31,7 @@ namespace Sushi.Kql
         /// <returns></returns>
         public SelectBuilder<T> Distinct(Expression<Func<T, object?>> expression)
         {
-            var dataProperty = _map.GetDataProperty(expression);
+            var dataProperty = _map.GetItem(expression);
             var distinctOperator = new DistinctOperator(dataProperty.Column);
             return Add(distinctOperator);
         }

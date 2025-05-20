@@ -41,7 +41,7 @@ namespace Sushi.Kql
         /// <returns></returns>
         public WhereBuilder<T> Between(Expression<Func<T, object?>> mappingExpression, object? from, object? to)
         {
-            var dataProperty = _map.GetDataProperty(mappingExpression);
+            var dataProperty = _map.GetItem(mappingExpression);
             var fromParameter = _parameters.Add(dataProperty.DataType, from);
             var toParameter = _parameters.Add(dataProperty.DataType, to);
             return AddKql($"{dataProperty.Column} between ({fromParameter}..{toParameter})");
@@ -52,7 +52,7 @@ namespace Sushi.Kql
         /// </summary>        
         public WhereBuilder<T> Add(Expression<Func<T, object?>> mappingExpression, object? value, ComparisonOperator comparisonOperator)
         {
-            var dataproperty = _map.GetDataProperty(mappingExpression);
+            var dataproperty = _map.GetItem(mappingExpression);
 
             return Add(dataproperty.Column, dataproperty.DataType, value, comparisonOperator);
         }

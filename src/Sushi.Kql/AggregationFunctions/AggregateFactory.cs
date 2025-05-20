@@ -12,7 +12,7 @@ public class AggregateFactory<T>
 
     public IAggregationFunction DCount(Expression<Func<T, object?>> on, string alias, int? accuracy = null)
     {
-        var mapItem = _map.GetDataProperty(on);
+        var mapItem = _map.GetItem(on);
         return new DCountFunction(mapItem.Column, alias, accuracy);
     }
 }
