@@ -7,7 +7,7 @@ namespace Sushi.Kql;
 /// </summary>
 public class Parameter(KqlDataType kqlType, string parameterName, object? value)
 {
-    public string Type { get; init; } = kqlType.ToString();
+    public string Type { get; init; } = kqlType.ToString().ToLower();
     public string Name { get; init; } = parameterName;
     public string Value { get; init; } = GetParameterValue(kqlType, value);
 
@@ -51,6 +51,20 @@ public class Parameter(KqlDataType kqlType, string parameterName, object? value)
                     return ((int)value).ToString();
                 }
                 throw new ArgumentException($"Expected an int for {kqlType}, but received {value.GetType()}.");
+            case KqlDataType.Long:
+                if (value == null)
+                {
+                    return "long(null)";
+                }
+                else if (value is long longValue)
+                {
+                    return longValue.ToString();
+                }
+                else if (value.GetType().IsEnum)
+                {
+                    return ((long)value).ToString();
+                }
+                throw new ArgumentException($"Expected a long for {kqlType}, but received {value.GetType()}.");
             case KqlDataType.Real:
                 if (value is float floatValue)
                 {

@@ -3,15 +3,10 @@
 namespace Sushi.Kql.UnitTests.Mocks;
 
 
-public class MockDataReader : IDataReader
+public class MockDataReader(List<Dictionary<string, object?>> rows) : IDataReader
 {
-    private readonly List<Dictionary<string, object?>> _rows;
+    private readonly List<Dictionary<string, object?>> _rows = rows;
     private int _currentIndex = -1;
-
-    public MockDataReader(List<Dictionary<string, object?>> rows)
-    {
-        _rows = rows;
-    }
 
     public bool Read()
     {
