@@ -18,7 +18,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\src\Sushi.Kql\Sushi.Kql.csproj" />
-    <ProjectReference Include="..\Sushi.Kql.TestData\Sushi.Kql.TestData.csproj" />
   </ItemGroup>
 
   <ItemGroup>
