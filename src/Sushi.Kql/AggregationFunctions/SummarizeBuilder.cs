@@ -51,7 +51,7 @@ public class SummarizeBuilder<T>
             {
                 if (i > 0)
                     _builder.Append(", ");
-                var dataProperty = _map.GetDataProperty(expressions[i]);
+                var dataProperty = _map.GetItem(expressions[i]);
                 _builder.Append(dataProperty.Column);
             }
         }

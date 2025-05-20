@@ -5,6 +5,7 @@ public class Earthquake
     public required float Magnitude { get; set; }
     public required int DepthInMeters { get; set; }
     public required Location Location { get; set; }
+    public required float ReadOnlyLongitude { get; set; }
 }
 
 public class Location

@@ -19,7 +19,8 @@ public class ResultMapperTest
             {
                 Latitude = 16.772f,
                 Longitude = 23.430f
-            }
+            },
+            ReadOnlyLongitude = 23.430f
         };
         var earthquake2 = new Earthquake()
         {
@@ -30,7 +31,8 @@ public class ResultMapperTest
             {
                 Latitude = 19.276f,
                 Longitude = 155.399f
-            }
+            },
+            ReadOnlyLongitude = 23.430f
         };
 
 
@@ -68,7 +70,8 @@ public class ResultMapperTest
             {
                 Latitude = 16.772f,
                 Longitude = 23.430f
-            }
+            },
+            ReadOnlyLongitude = 23.430f
         };
         var rows = new List<Dictionary<string, object?>>
         {
@@ -106,7 +109,8 @@ public class ResultMapperTest
             {
                 Latitude = 16.772f,
                 Longitude = 23.430f
-            }
+            },
+            ReadOnlyLongitude = 23.430f
         };
         var location = JToken.FromObject(earthquake.Location);
 
@@ -144,10 +148,9 @@ public class ResultMapperTest
 
     public class EarthquakeMap : DataMap<Earthquake>
     {
-        public override string TableName => "Earthquakes";
-
         public EarthquakeMap()
         {
+            Table("Earthquakes");
             Map(x => x.Timestamp);
             Map(x => x.Magnitude);
             Map(x => x.DepthInMeters);
@@ -158,10 +161,9 @@ public class ResultMapperTest
 
     public class EarthquakeWithDynamicLocationMap : DataMap<Earthquake>
     {
-        public override string TableName => "Earthquakes";
-
         public EarthquakeWithDynamicLocationMap()
         {
+            Table("Earthquakes");
             Map(x => x.Timestamp);
             Map(x => x.Magnitude);
             Map(x => x.DepthInMeters);

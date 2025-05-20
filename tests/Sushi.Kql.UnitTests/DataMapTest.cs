@@ -6,13 +6,13 @@ public class DataMapTest
     {
         var map = new DefaultColumnMapping();
 
-        Assert.Equal("Timestamp", map.GetDataProperty(x => x.Timestamp).Column);
-        Assert.Equal("Magnitude", map.GetDataProperty(x => x.Magnitude).Column);
-        Assert.Equal("DepthInMeters", map.GetDataProperty(x => x.DepthInMeters).Column);
-        Assert.Equal("Location_Latitude", map.GetDataProperty(x => x.Location.Latitude).Column);
-        Assert.Equal("Location_Longitude", map.GetDataProperty(x => x.Location.Longitude).Column);
+        Assert.Equal("Timestamp", map.GetItem(x => x.Timestamp).Column);
+        Assert.Equal("Magnitude", map.GetItem(x => x.Magnitude).Column);
+        Assert.Equal("DepthInMeters", map.GetItem(x => x.DepthInMeters).Column);
+        Assert.Equal("Location_Latitude", map.GetItem(x => x.Location.Latitude).Column);
+        Assert.Equal("Location_Longitude", map.GetItem(x => x.Location.Longitude).Column);
 
-        var ingestionMappings = map.IngestionMapping.IngestionMappings;
+        var ingestionMappings = map.GetIngestionMapping();
         Assert.Equal("$.Timestamp", ingestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
         Assert.Equal("$.Magnitude", ingestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
         Assert.Equal("$.DepthInMeters", ingestionMappings.Single(x => x.ColumnName == "DepthInMeters").Properties["Path"]);
@@ -25,13 +25,14 @@ public class DataMapTest
     {
         var map = new CustomColumnMapping();
 
-        Assert.Equal("Timestamp", map.GetDataProperty(x => x.Timestamp).Column);
-        Assert.Equal("Magnitude", map.GetDataProperty(x => x.Magnitude).Column);
-        Assert.Equal("Depth", map.GetDataProperty(x => x.DepthInMeters).Column);
-        Assert.Equal("Lat", map.GetDataProperty(x => x.Location.Latitude).Column);
-        Assert.Equal("Lng", map.GetDataProperty(x => x.Location.Longitude).Column);
+        Assert.Equal("Timestamp", map.GetItem(x => x.Timestamp).Column);
+        Assert.Equal("Magnitude", map.GetItem(x => x.Magnitude).Column);
+        Assert.Equal("Depth", map.GetItem(x => x.DepthInMeters).Column);
+        Assert.Equal("Lat", map.GetItem(x => x.Location.Latitude).Column);
+        Assert.Equal("Lng", map.GetItem(x => x.Location.Longitude).Column);
 
-        var ingestionMappings = map.IngestionMapping.IngestionMappings;
+        var ingestionMappings = map.GetIngestionMapping();
+        Assert.Equal(5, ingestionMappings.Count);
         Assert.Equal("$.Timestamp", ingestionMappings.Single(x => x.ColumnName == "Timestamp").Properties["Path"]);
         Assert.Equal("$.Magnitude", ingestionMappings.Single(x => x.ColumnName == "Magnitude").Properties["Path"]);
         Assert.Equal("$.DepthInMeters", ingestionMappings.Single(x => x.ColumnName == "Depth").Properties["Path"]);
@@ -44,41 +45,44 @@ public class DataMapTest
     {
         var map = new NoDefinedMappings();
 
-        Assert.Throws<ArgumentException>(() => map.GetDataProperty(x => x.Timestamp));
+        Assert.Throws<ArgumentException>(() => map.GetItem(x => x.Timestamp));
     }
 
 
     public class DefaultColumnMapping : DataMap<Earthquake>
     {
-        public override string TableName => "Earthquakes";
-
         public DefaultColumnMapping()
         {
+            Table("Earthquakes");
             Map(x => x.Timestamp);
             Map(x => x.Magnitude);
             Map(x => x.DepthInMeters);
             Map(x => x.Location.Latitude);
             Map(x => x.Location.Longitude);
+            
         }
     }
 
     public class CustomColumnMapping : DataMap<Earthquake>
     {
-        public override string TableName => "Earthquakes";
-
         public CustomColumnMapping()
         {
+            Table("Earthquakes");
             Map(x => x.Timestamp, "Timestamp");
             Map(x => x.Magnitude, "Magnitude");
             Map(x => x.DepthInMeters, "Depth");
             Map(x => x.Location.Latitude, "Lat");
             Map(x => x.Location.Longitude, "Lng");
+            Map(x => x.ReadOnlyLongitude, "Lng").ReadOnly();
         }
     }
 
     public class NoDefinedMappings : DataMap<Earthquake>
     {
-        public override string TableName => "Earthquakes";
+        public NoDefinedMappings()
+        {
+            
+        }
     }
 
 }

@@ -32,14 +32,14 @@ public class MakeSeriesBuilder<T>
 
     public MakeSeriesBuilder<T> DistinctCount(Expression<Func<T, object?>> expression, int? accuracy = null)
     {
-        var dataProperty = _map.GetDataProperty(expression);
+        var dataProperty = _map.GetItem(expression);
         _aggregate = new DistinctCountFunction(dataProperty.Column, "num", accuracy);
         return this;
     }
 
     public MakeSeriesBuilder<T> On(Expression<Func<T, object?>> on)
     {
-        var dataProperty = _map.GetDataProperty(on);
+        var dataProperty = _map.GetItem(on);
         _on = dataProperty.Column;
         return this;
     }
