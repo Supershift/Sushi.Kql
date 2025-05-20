@@ -49,7 +49,7 @@ public abstract class DataMap<T>
         }
 
         // check if not already mapped
-        if (Items.ContainsKey(propertyKey))
+        if (_items.ContainsKey(propertyKey))
         {
             throw new ArgumentException($"Expression {propertyKey} is already mapped.");
         }
