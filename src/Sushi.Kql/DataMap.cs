@@ -5,15 +5,14 @@ using Kusto.Data.Common;
 using Kusto.Ingest;
 
 namespace Sushi.Kql;
-
 /// <summary>
 /// Represents the mapping between ADX table and code objects.
 /// </summary>
 public abstract class DataMap<T>
 {
-    public string? TableName { get; private set;  }
+    public string? TableName { get; private set; }
 
-    private readonly Dictionary<string, DataMapItem> _items = [];
+    protected readonly Dictionary<string, DataMapItem> _items = [];
 
     /// <summary>
     /// Gets all mapped items.
@@ -27,6 +26,43 @@ public abstract class DataMap<T>
     protected void Table(string tableName)
     {
         TableName = tableName;
+    }
+
+    /// <summary>
+    /// Gets the mapping item for the given member expression.
+    /// </summary>
+    /// <exception cref="ArgumentException">Thrown if no mapping could be found for provided member expression.</exception>
+    public DataMapItem GetItem(MemberExpression memberExpression)
+    {
+        var memberTree = ReflectionHelper.GetMemberTree(memberExpression);
+        var path = memberTree.Select(x => x.Name).ToArray();
+        var propertyKey = GetPropertyKey(path);
+        if (Items.TryGetValue(propertyKey, out var item))
+        {
+            return item;
+        }
+        throw new ArgumentException($"No mapping found for property {propertyKey}");
+    }
+
+    /// <summary>
+    /// Gets the ingestion mapping for the mapped items.
+    /// </summary>
+    /// <returns></returns>
+    public List<ColumnMapping> GetIngestionMapping()
+    {
+        return Items.Values.Where(x => !x.IsReadOnly)
+            .Select(x => x.IngestionMapping)
+            .ToList();
+    }
+
+    protected static string BuildIngestionPath(string[] path)
+    {
+        return $"$.{string.Join(".", path)}";
+    }
+
+    protected static string GetPropertyKey(string[] path)
+    {
+        return string.Join("_", path);
     }
 
     /// <summary>
@@ -84,41 +120,6 @@ public abstract class DataMap<T>
         throw new ArgumentException($"No mapping found for property {propertyKey}");
     }
 
-    /// <summary>
-    /// Gets the mapping item for the given member expression.
-    /// </summary>
-    /// <exception cref="ArgumentException">Thrown if no mapping could be found for provided member expression.</exception>
-    public DataMapItem GetItem(MemberExpression memberExpression)
-    {
-        var memberTree = ReflectionHelper.GetMemberTree(memberExpression);
-        var path = memberTree.Select(x => x.Name).ToArray();
-        var propertyKey = GetPropertyKey(path);
-        if (Items.TryGetValue(propertyKey, out var item))
-        {
-            return item;
-        }
-        throw new ArgumentException($"No mapping found for property {propertyKey}");
-    }
-
-    /// <summary>
-    /// Gets the ingestion mapping for the mapped items.
-    /// </summary>
-    /// <returns></returns>
-    public List<ColumnMapping> GetIngestionMapping()
-    {
-        return Items.Values.Where(x => !x.IsReadOnly)
-            .Select(x => x.IngestionMapping)
-            .ToList();
-    }
-
-    private static string BuildIngestionPath(string[] path)
-    {
-        return $"$.{string.Join(".", path)}";
-    }
-
-    private static string GetPropertyKey(string[] path)
-    {
-        return string.Join("_", path);
-    }
+    
 }
 

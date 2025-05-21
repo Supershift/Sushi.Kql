@@ -80,4 +80,22 @@ internal static class ReflectionHelper
         var underlyingType = Nullable.GetUnderlyingType(type);
         return underlyingType ?? type;
     }
+
+    /// <summary>
+    /// Checks if a type is a subclass of a generic type.
+    /// </summary>    
+    /// <returns></returns>
+    public static bool IsSubClassOfGeneric(Type genericType, Type typeToCheck)
+    {
+        Type? type = typeToCheck;
+        while (type != null)
+        {
+            if (type.IsGenericType && type.GetGenericTypeDefinition() == genericType)
+            {
+                return true;
+            }
+            type = type.BaseType;
+        }
+        return false;
+    }
 }
