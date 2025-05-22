@@ -25,7 +25,7 @@ public class QueryBuilder<T>
     }
 
     /// <summary>
-    /// Filters data from the table.
+    /// Creates a new WHERE clause in the query. Chain predicates directly, e.g. Query.Where().Equals(x=>x.Column, value).Equals(x => x.OtherColumn, otherValue).
     /// </summary>
     /// <returns></returns>
     public WhereBuilder<T> Where()

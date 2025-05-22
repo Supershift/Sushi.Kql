@@ -29,22 +29,6 @@ public abstract class DataMap<T>
     }
 
     /// <summary>
-    /// Gets the mapping item for the given member expression.
-    /// </summary>
-    /// <exception cref="ArgumentException">Thrown if no mapping could be found for provided member expression.</exception>
-    public DataMapItem GetItem(MemberExpression memberExpression)
-    {
-        var memberTree = ReflectionHelper.GetMemberTree(memberExpression);
-        var path = memberTree.Select(x => x.Name).ToArray();
-        var propertyKey = GetPropertyKey(path);
-        if (Items.TryGetValue(propertyKey, out var item))
-        {
-            return item;
-        }
-        throw new ArgumentException($"No mapping found for property {propertyKey}");
-    }
-
-    /// <summary>
     /// Gets the ingestion mapping for the mapped items.
     /// </summary>
     /// <returns></returns>
@@ -90,14 +74,14 @@ public abstract class DataMap<T>
             throw new ArgumentException($"Expression {propertyKey} is already mapped.");
         }
 
-        var memberType = ReflectionHelper.GetMemberType(memberTree.Pop());
+        var memberType = ReflectionHelper.GetMemberType(memberTree.Last());
         var kqlType = Utility.GetKqlDataType(memberType);
         var ingestionMapping = new ColumnMapping
         {
             ColumnName = columnName,
             Properties = new Dictionary<string, string> { ["Path"] = BuildIngestionPath(path) },
         };
-        var mapItem = new DataMapItem(path, columnName, kqlType, memberType, ingestionMapping);
+        var mapItem = new DataMapItem(path, columnName, kqlType, memberType, ingestionMapping, memberTree.ToList());
         _items[propertyKey] = mapItem;
         return new DataMapItemSetter(mapItem);
     }
