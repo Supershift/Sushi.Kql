@@ -3,13 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.9.34902.65
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql", "Sushi.Kql\Sushi.Kql.csproj", "{4FE36607-57CD-4711-85AC-11728ECC4984}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql", "src\Sushi.Kql\Sushi.Kql.csproj", "{4FE36607-57CD-4711-85AC-11728ECC4984}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql.UnitTests", "..\tests\Sushi.Kql.UnitTests\Sushi.Kql.UnitTests.csproj", "{4DF53EB1-7624-4DF4-9272-9AAB28C41066}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql.UnitTests", "tests\Sushi.Kql.UnitTests\Sushi.Kql.UnitTests.csproj", "{4DF53EB1-7624-4DF4-9272-9AAB28C41066}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{3E4F4763-14DF-48C6-8014-65C3778A432D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql.IntegrationTests", "..\tests\Sushi.Kql.IntegrationTests\Sushi.Kql.IntegrationTests.csproj", "{69564D8D-E597-4588-B330-4BC49825C826}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Sushi.Kql.IntegrationTests", "tests\Sushi.Kql.IntegrationTests\Sushi.Kql.IntegrationTests.csproj", "{69564D8D-E597-4588-B330-4BC49825C826}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
