@@ -5,7 +5,7 @@ namespace Sushi.Kql
     /// <summary>
     /// Provides methods to scan assemblies for <see cref="DataMap"/> implementations.
     /// </summary>
-    internal static class DataMapScanner
+    public static class DataMapScanner
     {
         /// <summary>
         /// Scans the specified assemblies for <see cref="DataMap"/> implementations and adds them to the datamap provider.

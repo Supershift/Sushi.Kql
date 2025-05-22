@@ -5,17 +5,17 @@ namespace Sushi.Kql;
 
 internal static class ReflectionHelper
 {
-    public static Stack<MemberInfo> GetMemberTree<T>(Expression<Func<T, object?>> expression)
+    public static List<MemberInfo> GetMemberTree<T>(Expression<Func<T, object?>> expression)
     {
         return GetMemberTreeInternal(expression.Body);
     }
 
-    public static Stack<MemberInfo> GetMemberTree(MemberExpression expression)
+    public static List<MemberInfo> GetMemberTree(MemberExpression expression)
     {
         return GetMemberTreeInternal(expression);
     }
 
-    private static Stack<MemberInfo> GetMemberTreeInternal(Expression expression)
+    private static List<MemberInfo> GetMemberTreeInternal(Expression expression)
     {
         // Handle boxing conversions like (object)x.Property
         if (expression is UnaryExpression unary && unary.NodeType == ExpressionType.Convert)
@@ -23,12 +23,16 @@ internal static class ReflectionHelper
             expression = unary.Operand;
         }
 
-        var path = new Stack<MemberInfo>();
+        var path = new List<MemberInfo>();
         while (expression is MemberExpression member)
         {
-            path.Push(member.Member);
+            path.Add(member.Member);
             expression = member.Expression!;
         }
+
+        //reverse the result, so it starts with the lowest level property
+        if (path.Count > 1)
+            path.Reverse();
 
         return path;
     }

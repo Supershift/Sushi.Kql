@@ -30,10 +30,6 @@ namespace Sushi.Kql
         /// <param name="dataMap"></param>
         public void AddMapping(Type classToMap, Type dataMap)
         {
-            // check if class to map has a default, parameterless constructor, required for creating new objects
-            if (classToMap.GetConstructor(BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Public, Type.EmptyTypes) == null)
-                throw new ArgumentException($"{classToMap} does not have a parameterless constructor", nameof(classToMap));
-
             // check if dataMap is of type DataMap<classToMap>
             if (!ReflectionHelper.IsSubClassOfGeneric(typeof(DataMap<>), dataMap))
                 throw new ArgumentException($"{dataMap} is not of type DataMap<{classToMap}>");            
