@@ -1,10 +1,8 @@
-﻿using System.Diagnostics.CodeAnalysis;
-using System.Linq.Expressions;
-using System.Runtime.CompilerServices;
-using Sushi.Kql.Operators;
+﻿using System.Linq.Expressions;
+using System.Text;
+using Sushi.Kql.AggregationFunctions;
 
 namespace Sushi.Kql;
-
 /// <summary>
 /// Builds a 'make-series' operator, used to create series of specified aggregated values along a specified axis.
 /// </summary>
@@ -12,70 +10,87 @@ namespace Sushi.Kql;
 public class MakeSeriesBuilder<T>
 {
     private readonly DataMap<T> _map;
-    private object? _start;
-    private object? _stop;
-    private string? _on;
-    private IAggregationFunction? _aggregate;
-    private string? _step;
+    private readonly StringBuilder _builder;
+    private readonly ParameterCollection _parameters;
 
-
-    public MakeSeriesBuilder(DataMap<T> map)
+    internal MakeSeriesBuilder(MakeSeriesKind kind, DataMap<T> map, StringBuilder builder, ParameterCollection parameters)
     {
         _map = map;
+        _builder = builder;
+        _parameters = parameters;
+        builder.Append("| make-series ");
+        if(kind == MakeSeriesKind.NonEmpty)
+            builder.Append(" kind=nonempty ");
     }
 
-    public MakeSeriesBuilder<T> Count()
+    /// <summary>
+    /// Adds an aggregate to the make-series statement.
+    /// </summary>
+    /// <param name="on"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction> on)
     {
-        _aggregate = new CountFunction("num");
+        var aggregate = on(new AggregateFactory<T>(_map));
+        _builder.Append(aggregate.ToKql(_parameters));
         return this;
     }
 
-    public MakeSeriesBuilder<T> DistinctCount(Expression<Func<T, object?>> expression, int? accuracy = null)
-    {
-        var dataProperty = _map.GetItem(expression);
-        _aggregate = new DistinctCountFunction(dataProperty.Column, "num", accuracy);
-        return this;
-    }
-
+    /// <summary>
+    /// Adds the 'on' clause to the make-series statement.
+    /// </summary>
+    /// <param name="on"></param>
+    /// <returns></returns>
     public MakeSeriesBuilder<T> On(Expression<Func<T, object?>> on)
     {
-        var dataProperty = _map.GetItem(on);
-        _on = dataProperty.Column;
+        var dataMapItem = _map.GetItem(on);
+        _builder.Append(" on ").Append(dataMapItem.Column);
         return this;
     }
 
-    public MakeSeriesBuilder<T> From(object from)
+    /// <summary>
+    /// Adds the 'from' clause to the make-series statement.
+    /// </summary>
+    /// <param name="from"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> From<TParam>(TParam from)
     {
-        _start = from;
+        var parameter = _parameters.Add(from);
+        _builder.Append(" from ").Append(parameter);
         return this;
     }
 
-    public MakeSeriesBuilder<T> To(object to)
+    /// <summary>
+    /// Adds the 'to' clause to the make-series statement.
+    /// </summary>
+    /// <param name="to"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> To<TParam>(TParam to)
     {
-        _stop = to;
+        var parameter = _parameters.Add(to);
+        _builder.Append(" to ").Append(parameter);
         return this;
     }
 
+    /// <summary>
+    /// Adds the 'step' clause to the make-series statement.
+    /// </summary>
+    /// <param name="step"></param>
+    /// <returns></returns>
     public MakeSeriesBuilder<T> Step(string step)
     {
-        _step = step;
+        _builder.Append(" step ").Append(step);
         return this;
     }
 
-    public MakeSeriesOperator Build()
+    /// <summary>
+    /// Adds the 'by' clause to the make-series statement. Note: don't use in combination with <see cref="MakeSeriesKind.NonEmpty"/>.
+    /// </summary>
+    /// <param name="by"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> By(Expression<Func<T, object?>> by)
     {
-        ThrowIfNull(_on);
-        ThrowIfNull(_start);
-        ThrowIfNull(_stop);
-        ThrowIfNull(_step);
-        ThrowIfNull(_aggregate);
-        var result = new MakeSeriesOperator(_on, _aggregate, _start, _stop, _step);
-        return result;
-    }
-
-    private static void ThrowIfNull([NotNull] object? value, [CallerArgumentExpression(nameof(value))] string fieldName = "field")
-    {
-        if (value == null)
-            throw new InvalidOperationException($"Cannot build query, set {fieldName} before calling build");
+        var dataMapItem = _map.GetItem(by);
+        _builder.Append(" by ").Append(dataMapItem.Column);
+        return this;
     }
 }
