@@ -9,7 +9,7 @@ namespace Sushi.Kql;
 /// Builds a KQL query with a fluent API.
 /// </summary>
 /// <typeparam name="T"></typeparam>
-public class QueryBuilder<T>
+public class QueryBuilder<T> : IQueryBuilder
 {
     private readonly DataMap<T> _map;
     private readonly StringBuilder _builder;
@@ -23,6 +23,25 @@ public class QueryBuilder<T>
         _map = map;
         _builder = new StringBuilder(map.TableName);
         _parameters = new ParameterCollection();
+    }
+
+    /// <summary>
+    /// Gets the map used in the query builder.
+    /// </summary>
+    /// <returns></returns>
+    public DataMap<T> GetMap()
+    {
+        return _map;
+    }
+
+    /// <summary>
+    /// Adds a line of plain text KQL to the query.
+    /// </summary>
+    /// <param name="kql"></param>
+    public void AddKql(string kql)
+    {
+        _builder.AppendLine();
+        _builder.Append("| ").Append(kql);
     }
 
     /// <summary>
@@ -69,7 +88,7 @@ public class QueryBuilder<T>
     /// Returns a KQL string representation of the query.
     /// </summary>
     /// <returns></returns>
-    public string Build()
+    public string ToKqlString()
     {
         // add parameters
         var parameters = _parameters.GetParameters();

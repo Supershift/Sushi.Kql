@@ -49,11 +49,10 @@ public class ResultMapperTest
         // Act
         var result = ResultMapper.MapToMultipleResults(mockReader, dataMap);
 
-        // Assert size and row ids
-        Assert.NotEmpty(result);
-        Assert.Equal(2, result.Count);
-        Assert.Equal(earthquake.Timestamp, result[0].Timestamp);
-        Assert.Equal(earthquake2.Timestamp, result[1].Timestamp);
+        // Assert size and row ids        
+        Assert.Equal(2, result.Data.Count);
+        Assert.Equal(earthquake.Timestamp, result.Data[0].Timestamp);
+        Assert.Equal(earthquake2.Timestamp, result.Data[1].Timestamp);
     }
 
     [Fact]
@@ -84,7 +83,7 @@ public class ResultMapperTest
 
         // Act
         mockReader.Read(); // load first row for mapping
-        ResultMapper.MapRowToObject(mockReader, dataMap, instance);
+        ResultMapper.SetResultValuesToObject(mockReader, dataMap, instance);
 
         // Assert
         Assert.Equal(earthquake.Timestamp, instance.Timestamp);
@@ -125,7 +124,7 @@ public class ResultMapperTest
 
         // Act
         mockReader.Read(); // load first row for mapping
-        ResultMapper.MapRowToObject(mockReader, dataMap, instance);
+        ResultMapper.SetResultValuesToObject(mockReader, dataMap, instance);
 
         // Assert
         Assert.Equal(earthquake.Timestamp, instance.Timestamp);
@@ -141,9 +140,10 @@ public class ResultMapperTest
         // Arrange
         var mockReader = new MockDataReader([]);
         var dataMap = new EarthquakeMap();
+        Earthquake? instance = null;
 
         // Act & Assert
-        Assert.Throws<ArgumentNullException>(() => ResultMapper.MapRowToObject(mockReader, dataMap!, null));
+        Assert.Throws<ArgumentNullException>(() => ResultMapper.SetResultValuesToObject(mockReader, dataMap!, instance));
     }
 
     public class EarthquakeMap : DataMap<Earthquake>

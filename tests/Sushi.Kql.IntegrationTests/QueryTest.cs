@@ -10,7 +10,7 @@ public class QueryTest
 
     public QueryTest(AdxTestContainerFixture fixture)
     {
-        _queryClient = fixture.GetQueryClient();
+        _queryClient = fixture.GetQueryProvider();
     }
 
     [Fact]
@@ -21,13 +21,13 @@ public class QueryTest
         
         qb.Where().Add(x => x.ProductKey, 2023L, ComparisonOperator.Equals);
 
-        var kqlQuery = qb.Build();
+        var kqlQuery = qb.ToKqlString();
         var parameters = qb.GetParameters();
         var properties = new ClientRequestProperties();
         if(parameters.Count > 0)
             properties.SetParameters(parameters);
         
-        var reader = await _queryClient.ExecuteQueryAsync(map.TableName, kqlQuery, properties);
+        var reader = await _queryClient.ExecuteQueryAsync("ContosoSales", kqlQuery, properties);
         int count = 0;
         while(reader.Read())
         {
