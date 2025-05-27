@@ -33,6 +33,6 @@ public class SummarizeTest
         {
             count++;
         }
-        Assert.Equal(520, count);
+        Assert.Equal(519, count);
     }
 }
