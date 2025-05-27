@@ -1,6 +1,5 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
-using Sushi.Kql.Operators;
 
 namespace Sushi.Kql
 {
@@ -20,45 +19,16 @@ namespace Sushi.Kql
             _map = map;
             _builder = builder;
             _parameters = parameters;
-            _isFirst = true;
-            builder.Append("|  ");
-        }
-
-        /// <summary>
-        /// Gets all distinct values for a column.
-        /// </summary>
-        /// <param name="expression"></param>
-        /// <returns></returns>
-        public SelectBuilder<T> Distinct(Expression<Func<T, object?>> expression)
-        {
-            var dataProperty = _map.GetItem(expression);
-            var distinctOperator = new DistinctOperator(dataProperty.Column);
-            return Add(distinctOperator);
+            _isFirst = true;            
         }
 
         /// <summary>
         /// Creates series of specified aggregated values along a specified axis.
-        /// </summary>
-        /// <param name="on"></param>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        /// <param name="step"></param>
-        /// <returns></returns>
-        public SelectBuilder<T> MakeSeries(Action<MakeSeriesBuilder<T>> buildAction)
+        /// </summary>        
+        public MakeSeriesBuilder<T> MakeSeries(MakeSeriesKind kind = MakeSeriesKind.Empty)
         {
-            var builder = new MakeSeriesBuilder<T>(_map);
-            buildAction(builder);
-            return Add(builder.Build());
-        }
-
-        /// <summary>
-        /// Adds a KQL operator to the query.
-        /// </summary>
-        /// <param name="kqlOperator"></param>
-        /// <returns></returns>
-        public SelectBuilder<T> Add(IKqlOperator kqlOperator)
-        {
-            return Add(kqlOperator.ToKql(_parameters));
+            var builder = new MakeSeriesBuilder<T>(kind, _map, _builder, _parameters);
+            return builder;
         }
 
         /// <summary>

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -10,6 +11,12 @@ namespace Sushi.Kql
     public class ParameterCollection
     {
         private readonly Dictionary<string, Parameter> _parameters = [];
+
+        public string Add<T>(T? value)
+        {
+            var kqlType = Utility.GetKqlDataType(typeof(T));
+            return Add(kqlType, value);
+        }
 
         public string Add(KqlDataType kqlDataType, object? value)
         {
