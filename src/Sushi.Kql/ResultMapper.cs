@@ -49,31 +49,52 @@ public static class ResultMapper
                 {
                     var value = reader.GetValue(columnIndex);
 
-                    // convert DBNull to null
-                    if (value == DBNull.Value)
-                    {
-                        value = null;
-                    }
-                    else if (item.DataType == KqlDataType.Boolean && value is sbyte)
-                    {
-                        // Booleans are read as SByte. SetMemberValue doesn't support this yet.
-                        value = Convert.ToBoolean(value);
-                    }
-                    else if (value is SqlDecimal valueDecimal)
-                    {
-                        // Decimals are read as SqlDecimal. SetMemberValue doesn't support this yet.
-                        value = valueDecimal.Value;
-                    }                    
-                    else if (value is JToken jtoken)
-                    {
-                        // handle array, objects and primtive values stored as dynamic data type
-                        value = jtoken.ToObject(item.MemberType);
-                    }
+                    var convertedValue = ConvertReaderValueToTargetValue(value, item);
 
-                    ReflectionHelper.SetNestedProperty(instance, item.Path, value);
+                    ReflectionHelper.SetMemberValue(item.MemberInfoTree, convertedValue, instance);
                     break;
                 }
             }
         }
+    }
+
+    internal static object? ConvertReaderValueToTargetValue(object value, DataMapItem item)
+    {
+        object? result;
+        // convert DBNull to null
+        if (value == DBNull.Value)
+        {
+            result = null;
+        }
+        else if (item.DataType == KqlDataType.Boolean && value is sbyte)
+        {
+            // Booleans are read as SByte. SetMemberValue doesn't support this yet.
+            result = Convert.ToBoolean(value);
+        }
+        else if (value is SqlDecimal valueDecimal)
+        {
+            // Decimals are read as SqlDecimal. SetMemberValue doesn't support this yet.
+            result = valueDecimal.Value;
+        }
+        else if (value is JToken jtoken)
+        {
+            // handle array, objects and primtive values stored as dynamic data type
+            result = jtoken.ToObject(item.MemberType);
+        }
+        else if (item.MemberType == typeof(DateTimeOffset) && value is DateTime valueDateTime)
+        {
+            // convert to datetimeoffset
+            result = (DateTimeOffset)valueDateTime;
+        }
+        else if (item.MemberType == typeof(Guid) && value is string valueString && Guid.TryParse(valueString, out var guidValue))
+        {
+            // convert to Guid if the value is a string representation of a Guid, and target type is a guid
+            result = guidValue;
+        }
+        else
+        {
+            result = value;
+        }
+        return result;
     }
 }

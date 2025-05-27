@@ -50,4 +50,21 @@ public static class Utility
 
         return KqlDataType.String;
     }
+
+    /// <summary>
+    /// Converts <paramref name="value"/> to an enumeration member if <paramref name="type"/> or its underlying <see cref="Type"/> is an <see cref="Enum"/>.
+    /// </summary>
+    /// <param name="value"></param>
+    /// <param name="type"></param>
+    /// <returns></returns>
+    public static object? ConvertValueToEnum(object? value, Type type)
+    {
+
+        if (type.IsEnum && value != null)
+        {
+            value = Enum.ToObject(type, value);
+        }
+
+        return value;
+    }
 }

@@ -30,7 +30,7 @@ public class QueryClientTest
         var client = new QueryClient(_cslQueryProvider);
         
         // act
-        using var reader = await client.ExecuteQueryAsync(queryBuilder, "ContosoSales");
+        using var reader = await client.ExecuteQueryAsync(queryBuilder, "ContosoSales", CancellationToken.None);
         int count = 0;
         
         while (reader.Read())
@@ -51,7 +51,7 @@ public class QueryClientTest
         var client = new QueryClient(_cslQueryProvider);
 
         // act
-        var result = await client.GetAllAsync(queryBuilder, "ContosoSales");        
+        var result = await client.GetAllAsync(queryBuilder, "ContosoSales", CancellationToken.None);        
 
         // assert
         Assert.Equal(10, result.Data.Count);
