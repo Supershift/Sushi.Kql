@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Linq.Expressions;
 using System.Text;
 using Sushi.Kql.AggregationFunctions;
 
@@ -87,5 +88,25 @@ public class QueryBuilder<T>
     public Dictionary<string, string> GetParameters()
     {
         return _parameters.GetParameters().ToDictionary(x => x.Name, x => x.Value);
+    }
+
+    /// <summary>
+    /// Limits output to a specified number of rows. Unless the data is sorted, the rows returned are not guaranteed to be the same each time the query is run.
+    /// </summary>
+    /// <param name="numberOfRows"></param>
+    public void Limit(int numberOfRows)
+    {
+        _builder.AppendLine();
+        _builder.Append($"| limit {numberOfRows}");
+    }
+
+    /// <summary>
+    /// Takes N number of rows of rows. Unless the data is sorted, the rows returned are not guaranteed to be the same each time the query is run.
+    /// </summary>
+    /// <param name="numberOfRows"></param>
+    public void Take(int numberOfRows)
+    {
+        _builder.AppendLine();
+        _builder.Append($"| take {numberOfRows}");
     }
 }
