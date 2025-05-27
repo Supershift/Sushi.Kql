@@ -7,7 +7,7 @@ namespace Sushi.Kql.TestData.Fixture;
 public class AdxTestContainerFixture : IAsyncLifetime
 {
     private readonly KustoContainer _kustoContainer;
-    public const string DatabaseName = "SalesFact";
+    public const string DatabaseName = "ContosoSales";
     private const string CreateTableCommand =
         ".create table SalesFact (SalesAmount: real, TotalCost: real, DateKey: datetime, ProductKey: long, CustomerKey: long)";
 
@@ -19,7 +19,7 @@ public class AdxTestContainerFixture : IAsyncLifetime
             .Build();
     }
 
-    public ICslQueryProvider GetQueryClient()
+    public ICslQueryProvider GetQueryProvider()
     {
         var client = KustoClientFactory.CreateCslQueryProvider(_kustoContainer.GetConnectionString());
         client.DefaultDatabaseName = DatabaseName;
@@ -48,7 +48,7 @@ public class AdxTestContainerFixture : IAsyncLifetime
         // fill table
         await client.ExecuteControlCommandAsync(
             DatabaseName,
-            ".ingest into table SalesFact(@\"/data/SalesFact.csv\")"
+            ".ingest into table SalesFact(@\"/data/SalesFact.csv\") with (ignoreFirstRecord=true)"
         );
     }
 

@@ -15,7 +15,7 @@ public class MakeSeriesTest
 
     public MakeSeriesTest(AdxTestContainerFixture fixture)
     {
-        _queryClient = fixture.GetQueryClient();
+        _queryClient = fixture.GetQueryProvider();
         var map = new SalesFactMap();
         _queryBuilder = new QueryBuilder<SalesFact>(map);
     }
@@ -28,13 +28,13 @@ public class MakeSeriesTest
 
         _queryBuilder.Select().MakeSeries(MakeSeriesKind.NonEmpty).Agg(a => a.Count("Sales")).On(x => x.DateKey).From(from).To(to).Step("1d");
 
-        var kqlQuery = _queryBuilder.Build();
+        var kqlQuery = _queryBuilder.ToKqlString();
         var parameters = _queryBuilder.GetParameters();
         var properties = new ClientRequestProperties();
         if (parameters.Count > 0)
             properties.SetParameters(parameters);
 
-        var reader = await _queryClient.ExecuteQueryAsync("SalesFact", kqlQuery, properties);
+        var reader = await _queryClient.ExecuteQueryAsync("ContosoSales", kqlQuery, properties);
         int count = 0;
         while (reader.Read())
         {
@@ -52,13 +52,13 @@ public class MakeSeriesTest
 
         _queryBuilder.Select().MakeSeries().Agg(a => a.Count("Sales")).On(x => x.DateKey).From(from).To(to).Step("1d").By(x=>x.ProductKey);
 
-        var kqlQuery = _queryBuilder.Build();
+        var kqlQuery = _queryBuilder.ToKqlString();
         var parameters = _queryBuilder.GetParameters();
         var properties = new ClientRequestProperties();
         if (parameters.Count > 0)
             properties.SetParameters(parameters);
 
-        var reader = await _queryClient.ExecuteQueryAsync("SalesFact", kqlQuery, properties);
+        var reader = await _queryClient.ExecuteQueryAsync("ContosoSales", kqlQuery, properties);
         int count = 0;
         while (reader.Read())
         {
