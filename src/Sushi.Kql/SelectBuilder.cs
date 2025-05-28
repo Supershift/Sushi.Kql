@@ -1,5 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
+using Sushi.Kql.Mapping;
+using Sushi.Kql.TimeSeries;
 
 namespace Sushi.Kql
 {

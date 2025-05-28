@@ -1,6 +1,7 @@
 ﻿using System.Text.Json;
 using Kusto.Data.Common;
 using Kusto.Ingest;
+using Sushi.Kql.Mapping;
 
 namespace Sushi.Kql;
 

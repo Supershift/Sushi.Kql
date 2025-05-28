@@ -1,4 +1,6 @@
-﻿namespace Sushi.Kql.UnitTests;
+﻿using Sushi.Kql.Mapping;
+
+namespace Sushi.Kql.UnitTests;
 
 public class UtilityTest
 {

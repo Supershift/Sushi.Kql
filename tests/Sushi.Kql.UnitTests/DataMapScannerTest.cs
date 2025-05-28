@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using Sushi.Kql.Mapping;
 
 namespace Sushi.Kql.UnitTests
 {

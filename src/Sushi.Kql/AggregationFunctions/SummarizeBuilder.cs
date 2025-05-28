@@ -1,5 +1,6 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
+using Sushi.Kql.Mapping;
 
 namespace Sushi.Kql.AggregationFunctions;
 

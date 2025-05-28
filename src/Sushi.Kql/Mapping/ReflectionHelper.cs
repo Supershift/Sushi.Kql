@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.Mapping;
 
 internal static class ReflectionHelper
 {

@@ -1,4 +1,4 @@
-﻿namespace Sushi.Kql;
+﻿namespace Sushi.Kql.TimeSeries;
 
 /// <summary>
 /// Defines options for the 'make-series' operator.

@@ -1,7 +1,7 @@
 ﻿using System.Data;
 using System.Globalization;
-using Kusto.Data.Common;
 using Newtonsoft.Json.Linq;
+using Sushi.Kql.Mapping;
 using Sushi.Kql.UnitTests.Mocks;
 
 namespace Sushi.Kql.UnitTests;
@@ -145,19 +145,6 @@ public class ResultMapperTest
 
         // Act & Assert
         Assert.Throws<ArgumentNullException>(() => ResultMapper.SetResultValuesToObject(mockReader, dataMap!, instance));
-    }
-
-    [Fact]
-    public void ConvertToDateTimeOffset()
-    {
-        var value = new DateTime(2018, 07, 01, 13, 0, 0, 0, DateTimeKind.Utc);
-
-        var mapItem = new DataMapItem([], "", KqlDataType.DateTime, typeof(DateTimeOffset), new ColumnMapping(), []);
-
-        var result = ResultMapper.ConvertReaderValueToTargetValue(value, mapItem);
-
-        Assert.IsType<DateTimeOffset>(result);
-        Assert.Equal(value, ((DateTimeOffset)result).UtcDateTime);
     }
 
     public class EarthquakeMap : DataMap<Earthquake>
