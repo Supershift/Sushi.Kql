@@ -1,8 +1,9 @@
 ﻿using System.Linq.Expressions;
 using System.Text;
 using Sushi.Kql.AggregationFunctions;
+using Sushi.Kql.Mapping;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.TimeSeries;
 /// <summary>
 /// Builds a 'make-series' operator, used to create series of specified aggregated values along a specified axis.
 /// </summary>
@@ -19,7 +20,7 @@ public class MakeSeriesBuilder<T>
         _builder = builder;
         _parameters = parameters;
         builder.Append("| make-series ");
-        if(kind == MakeSeriesKind.NonEmpty)
+        if (kind == MakeSeriesKind.NonEmpty)
             builder.Append(" kind=nonempty ");
     }
 

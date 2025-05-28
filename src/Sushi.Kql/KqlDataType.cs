@@ -1,4 +1,7 @@
 ﻿namespace Sushi.Kql;
+/// <summary>
+/// Defines KQL data types.
+/// </summary>
 public enum KqlDataType
 {
     /// <summary>
@@ -41,25 +44,4 @@ public enum KqlDataType
     /// A time interval.
     /// </summary>
     TimeSpan,
-}
-
-public static class KqlDataTypeExtensions
-{
-    public static string ToString(this KqlDataType type)
-    {
-        return type switch
-        {
-            KqlDataType.String => "string",
-            KqlDataType.Int => "int",
-            KqlDataType.Long => "long",
-            KqlDataType.Real => "real",
-            KqlDataType.Decimal => "decimal",
-            KqlDataType.DateTime => "datetime",
-            KqlDataType.Guid => "guid",
-            KqlDataType.Boolean => "boolean",
-            KqlDataType.TimeSpan => "timespan",
-            KqlDataType.Dynamic => throw new NotSupportedException(),
-            _ => throw new ArgumentOutOfRangeException(nameof(type), type, null)
-        };
-    }
 }

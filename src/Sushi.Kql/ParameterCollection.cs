@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using Sushi.Kql.Mapping;
 
 namespace Sushi.Kql
 {
@@ -14,7 +15,7 @@ namespace Sushi.Kql
 
         public string Add<T>(T? value)
         {
-            var kqlType = Utility.GetKqlDataType(typeof(T));
+            var kqlType = Conversion.GetKqlDataType(typeof(T));
             return Add(kqlType, value);
         }
 

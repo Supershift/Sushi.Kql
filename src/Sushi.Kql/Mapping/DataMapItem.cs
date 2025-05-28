@@ -1,7 +1,7 @@
 ﻿using System.Reflection;
 using Kusto.Data.Common;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.Mapping;
 
 public class DataMapItem
 {

@@ -1,4 +1,5 @@
 ﻿using System.Linq.Expressions;
+using Sushi.Kql.Mapping;
 
 namespace Sushi.Kql.AggregationFunctions;
 public class AggregateFactory<T>

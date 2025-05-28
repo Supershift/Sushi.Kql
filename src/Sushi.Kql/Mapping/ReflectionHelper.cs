@@ -1,7 +1,7 @@
 ﻿using System.Linq.Expressions;
 using System.Reflection;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.Mapping;
 
 internal static class ReflectionHelper
 {
@@ -131,7 +131,7 @@ internal static class ReflectionHelper
         Type targetType = GetMemberType(memberInfo);
 
         // if the target type is an enum, we need to convert the value to the enum's type
-        value = Utility.ConvertValueToEnum(value, targetType);
+        value = Conversion.ConvertValueToEnum(value, targetType);
 
         try
         {

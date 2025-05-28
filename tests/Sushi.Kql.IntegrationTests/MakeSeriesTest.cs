@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Kusto.Data.Common;
 using Sushi.Kql.TestData.Fixture;
+using Sushi.Kql.TimeSeries;
 
 namespace Sushi.Kql.IntegrationTests;
 [Collection(nameof(AdxTestContainerFixture))]

@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using Kusto.Data.Common;
 using Kusto.Ingest;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.Mapping;
 /// <summary>
 /// Represents the mapping between ADX table and code objects.
 /// </summary>
@@ -58,7 +58,7 @@ public abstract class DataMap<T>
     /// <exception cref="ArgumentException"></exception>
     protected DataMapItemSetter Map(Expression<Func<T, object?>> expression, string? columnName = null)
     {
-        var memberTree = ReflectionHelper.GetMemberTree(expression);        
+        var memberTree = ReflectionHelper.GetMemberTree(expression);
         var path = memberTree.Select(x => x.Name).ToArray();
         var propertyKey = GetPropertyKey(path);
         // Generate default column name if none is provided
@@ -75,7 +75,7 @@ public abstract class DataMap<T>
         }
 
         var memberType = ReflectionHelper.GetMemberType(memberTree.Last());
-        var kqlType = Utility.GetKqlDataType(memberType);
+        var kqlType = Conversion.GetKqlDataType(memberType);
         var ingestionMapping = new ColumnMapping
         {
             ColumnName = columnName,
@@ -104,6 +104,6 @@ public abstract class DataMap<T>
         throw new ArgumentException($"No mapping found for property {propertyKey}");
     }
 
-    
+
 }
 

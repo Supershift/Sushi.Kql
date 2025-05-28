@@ -1,7 +1,7 @@
 ﻿using System.Collections.Concurrent;
 using System.Reflection;
 
-namespace Sushi.Kql
+namespace Sushi.Kql.Mapping
 {
     /// <summary>
     /// Provides methods to map class types to DataMaps
@@ -32,7 +32,7 @@ namespace Sushi.Kql
         {
             // check if dataMap is of type DataMap<classToMap>
             if (!ReflectionHelper.IsSubClassOfGeneric(typeof(DataMap<>), dataMap))
-                throw new ArgumentException($"{dataMap} is not of type DataMap<{classToMap}>");            
+                throw new ArgumentException($"{dataMap} is not of type DataMap<{classToMap}>");
 
             _dataMapTypes[classToMap] = dataMap;
         }

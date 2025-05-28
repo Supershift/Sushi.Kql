@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sushi.Kql;
+namespace Sushi.Kql.Mapping;
 /// <summary>
 /// Provides methods to build a data map item.
 /// </summary>
