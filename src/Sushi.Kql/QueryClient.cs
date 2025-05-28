@@ -28,7 +28,7 @@ public class QueryClient
     /// <summary>
     /// Executes a KQL query and returns the results as an <see cref="IDataReader"/>. Called needs to dispose the returned reader after use.
     /// </summary>    
-    public Task<IDataReader> ExecuteQueryAsync(IQueryBuilder queryBuilder, string database)
+    public Task<IDataReader> ExecuteQueryAsync(IQueryBuilder queryBuilder, string database, CancellationToken cancellationToken = default)
     {
         var kqlQuery = queryBuilder.ToKqlString();
         var parameters = queryBuilder.GetParameters();
@@ -36,15 +36,15 @@ public class QueryClient
         if (parameters.Count > 0)
             properties.SetParameters(parameters);
 
-        return _client.ExecuteQueryAsync(database, kqlQuery, properties);
+        return _client.ExecuteQueryAsync(database, kqlQuery, properties, cancellationToken);
     }
 
     /// <summary>
     /// Executes the query and returns all rows.
     /// </summary>    
-    public async Task<QueryResult<T>> GetAllAsync<T>(QueryBuilder<T> queryBuilder, string database)
+    public async Task<QueryResult<T>> GetAllAsync<T>(QueryBuilder<T> queryBuilder, string database, CancellationToken cancellationToken = default)
     {
-        using var reader = await ExecuteQueryAsync(queryBuilder, database);
+        using var reader = await ExecuteQueryAsync(queryBuilder, database, cancellationToken);
         var dataMap = queryBuilder.GetMap();
         var result = ResultMapper.MapToMultipleResults(reader, dataMap);
         return result;

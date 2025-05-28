@@ -75,7 +75,7 @@ public abstract class DataMap<T>
         }
 
         var memberType = ReflectionHelper.GetMemberType(memberTree.Last());
-        var kqlType = Utility.GetKqlDataType(memberType);
+        var kqlType = Conversion.GetKqlDataType(memberType);
         var ingestionMapping = new ColumnMapping
         {
             ColumnName = columnName,

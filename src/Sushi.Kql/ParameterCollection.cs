@@ -15,7 +15,7 @@ namespace Sushi.Kql
 
         public string Add<T>(T? value)
         {
-            var kqlType = Utility.GetKqlDataType(typeof(T));
+            var kqlType = Conversion.GetKqlDataType(typeof(T));
             return Add(kqlType, value);
         }
 

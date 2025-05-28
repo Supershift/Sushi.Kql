@@ -131,7 +131,7 @@ internal static class ReflectionHelper
         Type targetType = GetMemberType(memberInfo);
 
         // if the target type is an enum, we need to convert the value to the enum's type
-        value = Utility.ConvertValueToEnum(value, targetType);
+        value = Conversion.ConvertValueToEnum(value, targetType);
 
         try
         {
