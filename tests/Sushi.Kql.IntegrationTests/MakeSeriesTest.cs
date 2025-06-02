@@ -46,6 +46,30 @@ public class MakeSeriesTest
     }
 
     [Fact]
+    public async Task MakeSeries_MultipleSeries()
+    {
+        var from = new DateTime(2007, 04, 01, 0, 0, 0, DateTimeKind.Utc);
+        var to = from.AddDays(14);
+
+        _queryBuilder.Select().MakeSeries().Agg(a => [a.Count("Sales"), a.DCount(x=>x.ProductKey, "ProductCount")]).On(x => x.DateKey).From(from).To(to).Step("1d");
+
+        var kqlQuery = _queryBuilder.ToKqlString();
+        var parameters = _queryBuilder.GetParameters();
+        var properties = new ClientRequestProperties();
+        if (parameters.Count > 0)
+            properties.SetParameters(parameters);
+
+        var reader = await _queryClient.ExecuteQueryAsync("ContosoSales", kqlQuery, properties);
+        int count = 0;
+        while (reader.Read())
+        {
+            Assert.Equal(3, reader.FieldCount);
+            count++;
+        }
+        Assert.Equal(1, count);
+    }
+
+    [Fact]
     public async Task MakeSeries_By()
     {
         var from = new DateTime(2007, 04, 01, 0, 0, 0, DateTimeKind.Utc);

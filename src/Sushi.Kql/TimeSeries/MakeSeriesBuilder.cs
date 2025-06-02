@@ -25,7 +25,7 @@ public class MakeSeriesBuilder<T>
     }
 
     /// <summary>
-    /// Adds an aggregate to the make-series statement.
+    /// Adds a single aggregate to the make-series statement.
     /// </summary>
     /// <param name="on"></param>
     /// <returns></returns>
@@ -33,6 +33,24 @@ public class MakeSeriesBuilder<T>
     {
         var aggregate = on(new AggregateFactory<T>(_map));
         _builder.Append(aggregate.ToKql(_parameters));
+        return this;
+    }
+
+    /// <summary>
+    /// Adds multiple aggregates to the make-series statement.
+    /// </summary>
+    /// <param name="on"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction[]> on)
+    {
+        var aggregates = on(new AggregateFactory<T>(_map));
+        for (int i = 0; i < aggregates.Length; i++)
+        {
+            if (i > 0)
+                _builder.Append(", ");
+            var aggregate = aggregates[i];
+            _builder.Append(aggregate.ToKql(_parameters));
+        }        
         return this;
     }
 
