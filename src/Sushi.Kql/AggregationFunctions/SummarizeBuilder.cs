@@ -22,7 +22,10 @@ public class SummarizeBuilder<T>
         builder.Append("| summarize ");
     }
 
-    public SummarizeBuilder<T> On(params IAggregationFunction[] on)
+    /// <summary>
+    /// Adds the aggregation to summarize to the statement.
+    /// </summary>    
+    public SummarizeBuilder<T> Agg(params IAggregationFunction[] on)
     {
         for (int i = 0; i < on.Length; i++)
         {
@@ -33,29 +36,43 @@ public class SummarizeBuilder<T>
         return this;
     }
 
-    public SummarizeBuilder<T> On(Func<AggregateFactory<T>, IAggregationFunction> on)
+    /// <summary>
+    /// Adds the aggregation to summarize to the statement.
+    /// </summary>
+    public SummarizeBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction> on)
     {
-        return On(on(new AggregateFactory<T>(_map)));
+        return Agg(on(new AggregateFactory<T>(_map)));
     }
 
-    public SummarizeBuilder<T> On(Func<AggregateFactory<T>, IAggregationFunction[]> on)
+    /// <summary>
+    /// Adds the aggregation to summarize to the statement.
+    /// </summary>
+    public SummarizeBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction[]> on)
     {
-        return On(on(new AggregateFactory<T>(_map)));
+        return Agg(on(new AggregateFactory<T>(_map)));
     }
 
-    public SummarizeBuilder<T> By(params Expression<Func<T, object?>>[] expressions)
+    /// <summary>
+    /// Adds the "by" clause to the Summarize statement using a single column.
+    /// </summary>
+    /// <param name="expression"></param>
+    /// <param name="alias"></param>
+    /// <returns></returns>
+    public SummarizeBuilder<T> By(Expression<Func<T, object?>> expression, string? alias = null)
     {
-        if (expressions.Length > 0)
-        {
-            _builder.Append(" by ");
-            for (int i = 0; i < expressions.Length; i++)
-            {
-                if (i > 0)
-                    _builder.Append(", ");
-                var dataProperty = _map.GetItem(expressions[i]);
-                _builder.Append(dataProperty.Column);
-            }
-        }
+        var byBuilder = new SummarizeByBuilder<T>(_map, _builder, _parameters);
+        byBuilder.Term(expression, alias);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds the "by" clause to the Summarize statement using a builder function.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
+    public SummarizeBuilder<T> By(Action<SummarizeByBuilder<T>> builder)
+    {
+        builder(new SummarizeByBuilder<T>(_map, _builder, _parameters));
         return this;
     }
 }

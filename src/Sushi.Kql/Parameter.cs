@@ -37,6 +37,12 @@ public class Parameter(KqlDataType kqlType, string parameterName, object? value)
                     return "datetime(null)";
                 }
                 throw new ArgumentException($"Expected a DateTime for {kqlType}, but received {value.GetType()}.");
+            case KqlDataType.TimeSpan:
+                if (value is string)
+                {
+                    return value.ToString() ?? "";
+                }
+                throw new ArgumentException($"Expected a string for {kqlType}, but received {value.GetType()}.");
             case KqlDataType.Int:
                 if (value == null)
                 {
