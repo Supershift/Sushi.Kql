@@ -103,13 +103,27 @@ public class MakeSeriesBuilder<T>
 
     /// <summary>
     /// Adds the 'by' clause to the make-series statement. Note: don't use in combination with <see cref="MakeSeriesKind.NonEmpty"/>.
-    /// </summary>
-    /// <param name="by"></param>
-    /// <returns></returns>
-    public MakeSeriesBuilder<T> By(Expression<Func<T, object?>> by)
+    /// </summary>    
+    public MakeSeriesBuilder<T> By(Expression<Func<T, object?>> by, string? alias)
     {
         var dataMapItem = _map.GetItem(by);
-        _builder.Append(" by ").Append(dataMapItem.Column);
+        _builder.Append(" by ");
+        if(!string.IsNullOrWhiteSpace(alias))
+        {
+            _builder.Append(alias).Append(" = ");
+        }
+        _builder.Append(dataMapItem.Column);
+        return this;
+    }
+
+    /// <summary>
+    /// Adds the "by" clause to the make-series statement using a builder function.
+    /// </summary>
+    /// <param name="builder"></param>
+    /// <returns></returns>
+    public MakeSeriesBuilder<T> By(Action<SummarizeByBuilder<T>> builder)
+    {
+        builder(new SummarizeByBuilder<T>(_map, _builder, _parameters));
         return this;
     }
 }

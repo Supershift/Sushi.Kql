@@ -27,7 +27,7 @@ public class SummarizeByBuilder<T>
         _builder = builder;
         _parameters = parameters;
         _count = 0;
-        _builder.Append("by ");
+        _builder.Append(" by ");
     }
 
     /// <summary>
