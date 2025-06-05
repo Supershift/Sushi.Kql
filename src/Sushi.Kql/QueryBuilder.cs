@@ -17,13 +17,26 @@ public class QueryBuilder<T> : IQueryBuilder
     private readonly ParameterCollection _parameters;
 
     /// <summary>
-    /// Creates a new instance of <see cref="QueryBuilder{T}"/>.
+    /// Creates a new instance of <see cref="QueryBuilder{T}"/> using the map's table name.
     /// </summary>        
-    public QueryBuilder(DataMap<T> map)
+    public QueryBuilder(DataMap<T> map) : this(map, map.TableName!)
     {
+    }    
+
+    /// <summary>
+    /// Creates a new instance of <see cref="QueryBuilder{T}"/> for the provided <paramref name="tableName"/>.
+    /// </summary>        
+    public QueryBuilder(DataMap<T> map, string tableName) : this(map, new StringBuilder(), new ParameterCollection(), tableName)
+    {
+    }    
+
+    private QueryBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters, string tableName)
+    {
+        ArgumentNullException.ThrowIfNull(tableName);
         _map = map;
-        _builder = new StringBuilder(map.TableName);
-        _parameters = new ParameterCollection();
+        _builder = builder;        
+        _parameters = parameters;
+        builder.Append(tableName);
     }
 
     /// <summary>
@@ -84,21 +97,60 @@ public class QueryBuilder<T> : IQueryBuilder
         _builder.AppendLine();
         _builder.Append($"| top({numberOfRows}) by {expression}");
         if (sortDirection != null)
-            _builder.Append(' ').Append(sortDirection.ToString().ToLower());
+            _builder.Append(' ').Append(sortDirection.Value.ToString().ToLower());
     }
 
     /// <summary>
-    /// Returns a KQL string representation of the query.
+    /// Binds a name to all previous input in the query, allowing it to be referenced later in the query by the name.
     /// </summary>
-    /// <returns></returns>
-    public string ToKqlString()
+    /// <param name="name"></param>
+    /// <param name="materialize">If true, the inpuit is wrapped by a materialize() function call. Otherwise, the value is recalculated on every reference.</param>
+    public void As(string name, bool materialize = false)
+    {
+        _builder.AppendLine();
+        _builder.Append("| as");
+        if (materialize)
+            _builder.Append(" hint.materialized=true");
+        _builder.Append(' ').Append(name);
+    }
+
+    /// <summary>
+    /// Takes two queries and returns the rows of all of them.
+    /// </summary>    
+    public void Union(Action<QueryBuilder<T>> unionBuilder)
+    {
+        Union(_map.TableName!, unionBuilder);
+    }
+
+    /// <summary>
+    /// Takes two queries and returns the rows of all of them.
+    /// </summary>    
+    public void Union(string tableToJoin, Action<QueryBuilder<T>> unionBuilder)
+    {
+        // create new querybuilder for the union
+        // pass the existing parametercollection to keep those parameters unique
+        var queryBuilder = new QueryBuilder<T>(_map, new StringBuilder(), _parameters, tableToJoin);
+
+        // call unionBuilder action
+        unionBuilder(queryBuilder);
+
+        // get kql for query to join
+        string unionKql = queryBuilder.ToKqlString(false);
+
+        // build union in query
+        _builder.AppendLine();
+        _builder.Append("| union (").Append(unionKql).Append(')');        
+    }
+
+    /// <inheritdoc />
+    public string ToKqlString(bool declareParameters = true)
     {
         // add parameters
-        var parameters = _parameters.GetParameters();
-        if (parameters.Count > 0)
+        if (declareParameters && _parameters.Count > 0)
         {
+            var parameters = _parameters.GetParameters();            
             var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
-            _builder.Insert(0, $"declare query_parameters({stringified});\n");
+            _builder.Insert(0, $"declare query_parameters({stringified});{Environment.NewLine}");            
         }
         return _builder.ToString();
     }
