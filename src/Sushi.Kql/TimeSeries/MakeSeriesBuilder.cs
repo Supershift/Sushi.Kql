@@ -104,7 +104,7 @@ public class MakeSeriesBuilder<T>
     /// <summary>
     /// Adds the 'by' clause to the make-series statement. Note: don't use in combination with <see cref="MakeSeriesKind.NonEmpty"/>.
     /// </summary>    
-    public MakeSeriesBuilder<T> By(Expression<Func<T, object?>> by, string? alias)
+    public MakeSeriesBuilder<T> By(Expression<Func<T, object?>> by, string? alias = null)
     {
         var dataMapItem = _map.GetItem(by);
         _builder.Append(" by ");
