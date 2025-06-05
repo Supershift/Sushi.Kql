@@ -8,7 +8,7 @@ public static class KqlDataTypeExtensions
     /// <summary>
     /// Returns the KQL string representation of the <see cref="KqlDataType"/>.
     /// </summary>    
-    public static string ToString(this KqlDataType type)
+    public static string ToKqlString(this KqlDataType type)
     {
         return type switch
         {

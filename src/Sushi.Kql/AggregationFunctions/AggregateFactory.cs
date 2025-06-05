@@ -32,4 +32,13 @@ public class AggregateFactory<T>
         }
         return new ArgMaxFunction(mapItem.Column, columns, alias);
     }
+
+    /// <summary>
+    /// Sums the values of the specified expression.
+    /// </summary>    
+    public IAggregationFunction Sum(Expression<Func<T, object?>> on, string? alias)
+    {
+        var mapItem = _map.GetItem(on);
+        return new SumFunction(mapItem.Column, alias);
+    }
 }
