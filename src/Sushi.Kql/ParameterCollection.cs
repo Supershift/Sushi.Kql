@@ -13,6 +13,8 @@ namespace Sushi.Kql
     {
         private readonly Dictionary<string, Parameter> _parameters = [];
 
+        public int Count => _parameters.Count;
+
         public string Add<T>(T? value)
         {
             var kqlType = Conversion.GetKqlDataType(typeof(T));

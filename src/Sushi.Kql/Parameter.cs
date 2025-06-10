@@ -65,12 +65,15 @@ public class Parameter(KqlDataType kqlType, string parameterName, object? value)
                 else if (value is long longValue)
                 {
                     return longValue.ToString();
-                }
+                }                
                 else if (value.GetType().IsEnum)
                 {
                     return ((long)value).ToString();
                 }
-                throw new ArgumentException($"Expected a long for {kqlType}, but received {value.GetType()}.");
+                else
+                {
+                    return Convert.ToInt64(value).ToString();
+                }                
             case KqlDataType.Real:
                 if (value is float floatValue)
                 {

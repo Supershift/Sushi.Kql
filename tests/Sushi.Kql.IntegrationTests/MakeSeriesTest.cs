@@ -24,8 +24,9 @@ public class MakeSeriesTest
     [Fact]
     public async Task MakeSeries_NonEmpty()
     {
+        int days = 14;
         var from = new DateTime(2007, 04, 01, 0, 0, 0, DateTimeKind.Utc);
-        var to = from.AddDays(14);
+        var to = from.AddDays(days);
 
         _queryBuilder.Select().MakeSeries(MakeSeriesKind.NonEmpty).Agg(a => a.Count("Sales")).On(x => x.DateKey).From(from).To(to).Step("1d");
 

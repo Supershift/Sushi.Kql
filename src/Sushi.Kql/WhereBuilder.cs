@@ -59,6 +59,15 @@ namespace Sushi.Kql
         }
 
         /// <summary>
+        /// Adds a predicate to the query, based on the specified comparison operator.
+        /// </summary>        
+        public WhereBuilder<T> Add(string expression, object value, ComparisonOperator comparisonOperator)
+        {
+            var kqlType = Conversion.GetKqlDataType(value.GetType());
+            return Add(expression, kqlType, value, comparisonOperator);
+        }
+
+        /// <summary>
         /// Adds custom KQL to the query.
         /// </summary>
         /// <param name="customKql"></param>
