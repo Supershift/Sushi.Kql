@@ -49,7 +49,7 @@ public class SummarizeByBuilder<T>
     public SummarizeByBuilder<T> Bin(Expression<Func<T, object?>> expression, string roundTo, string? alias = null)
     {   
         var dataProperty = _map.GetItem(expression);
-        string roundToParameter = _parameters.Add(KqlDataType.TimeSpan, "1d");
+        string roundToParameter = _parameters.Add(KqlDataType.TimeSpan, roundTo);
         AddItem($"bin({dataProperty.Column}, {roundToParameter})", alias);
         return this;
     }
