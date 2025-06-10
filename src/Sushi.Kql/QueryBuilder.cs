@@ -79,10 +79,12 @@ public class QueryBuilder<T> : IQueryBuilder
     /// Limits the results to a specified number of rows.
     /// </summary>        
     /// <returns></returns>
-    public void Top(int numberOfRows, string expression)
+    public void Top(int numberOfRows, string expression, SortDirection? sortDirection = null)
     {
         _builder.AppendLine();
         _builder.Append($"| top({numberOfRows}) by {expression}");
+        if (sortDirection != null)
+            _builder.Append(' ').Append(sortDirection.ToString().ToLower());
     }
 
     /// <summary>
