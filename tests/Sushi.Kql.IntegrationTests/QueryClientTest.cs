@@ -12,27 +12,27 @@ namespace Sushi.Kql.IntegrationTests;
 public class QueryClientTest
 {
     private readonly ICslQueryProvider _cslQueryProvider;
-    private readonly SalesFactMap _map;    
+    private readonly SalesFactMap _map;
 
     public QueryClientTest(AdxTestContainerFixture fixture)
     {
         _cslQueryProvider = fixture.GetQueryProvider();
         _map = new SalesFactMap();
-        
+
     }
 
     [Fact]
     public async Task ExecuteQueryTest()
     {
         // arrange
-        var queryBuilder = new QueryBuilder<SalesFact>(_map);        
-        
+        var queryBuilder = new QueryBuilder<SalesFact>(_map);
+
         var client = new QueryClient(_cslQueryProvider);
-        
+
         // act
         using var reader = await client.ExecuteQueryAsync(queryBuilder, "ContosoSales", CancellationToken.None);
         int count = 0;
-        
+
         while (reader.Read())
         {
             count++;
@@ -51,7 +51,7 @@ public class QueryClientTest
         var client = new QueryClient(_cslQueryProvider);
 
         // act
-        var result = await client.GetAllAsync(queryBuilder, "ContosoSales", CancellationToken.None);        
+        var result = await client.GetAllAsync(queryBuilder, "ContosoSales", CancellationToken.None);
 
         // assert
         Assert.Equal(10, result.Data.Count);
