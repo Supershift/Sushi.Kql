@@ -22,20 +22,20 @@ public class QueryBuilder<T> : IQueryBuilder
     /// </summary>        
     public QueryBuilder(DataMap<T> map) : this(map, map.TableName!)
     {
-    }    
+    }
 
     /// <summary>
     /// Creates a new instance of <see cref="QueryBuilder{T}"/> for the provided <paramref name="tableName"/>.
     /// </summary>        
     public QueryBuilder(DataMap<T> map, string tableName) : this(map, new StringBuilder(), new ParameterCollection(), tableName)
     {
-    }    
+    }
 
     private QueryBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters, string tableName)
     {
         ArgumentNullException.ThrowIfNull(tableName);
         _map = map;
-        _builder = builder;        
+        _builder = builder;
         _parameters = parameters;
         builder.Append(tableName);
     }
@@ -135,7 +135,7 @@ public class QueryBuilder<T> : IQueryBuilder
         // build union in query
         _builder.AppendLine();
         _builder.Append("| union ");
-        if(!string.IsNullOrWhiteSpace(withsourceName))
+        if (!string.IsNullOrWhiteSpace(withsourceName))
             _builder.Append($"withsource={withsourceName} ");
         _builder.Append($"({unionKql})");
     }
@@ -148,15 +148,24 @@ public class QueryBuilder<T> : IQueryBuilder
         return new MvExpandBuilder<T>(_builder, _map);
     }
 
+    /// <summary>
+    /// Sorts the rows of the input table into order by one or more columns.
+    /// </summary>        
+    public SortBuilder<T> Sort()
+    {
+        _builder.AppendLine();
+        return new SortBuilder<T>(_map, _builder);
+    }
+
     /// <inheritdoc />
     public string ToKqlString(bool declareParameters = true)
     {
         // add parameters
         if (declareParameters && _parameters.Count > 0)
         {
-            var parameters = _parameters.GetParameters();            
+            var parameters = _parameters.GetParameters();
             var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
-            _builder.Insert(0, $"declare query_parameters({stringified});{Environment.NewLine}");            
+            _builder.Insert(0, $"declare query_parameters({stringified});{Environment.NewLine}");
         }
         return _builder.ToString();
     }
@@ -189,4 +198,6 @@ public class QueryBuilder<T> : IQueryBuilder
         _builder.AppendLine();
         _builder.Append($"| take {numberOfRows}");
     }
+
+
 }
