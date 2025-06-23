@@ -209,5 +209,14 @@ public class QueryBuilder<T> : IQueryBuilder
         _builder.Append($"| take {numberOfRows}");
     }
 
+    /// <summary>
+    /// Triggers the query side-effect with actually returning the results back to the client.
+    /// </summary>
+    public void Consume()
+    {
+        _builder.AppendLine();
+        _builder.Append($"| consume");
+    }
+
 
 }
