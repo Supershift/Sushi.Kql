@@ -1,8 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using System.Data.SqlTypes;
-using System.Reflection;
-using Newtonsoft.Json.Linq;
 
 namespace Sushi.Kql.Mapping;
 
