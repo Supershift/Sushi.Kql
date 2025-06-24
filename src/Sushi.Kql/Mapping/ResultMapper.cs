@@ -1,8 +1,5 @@
 ﻿using System.Data;
 using System.Data.Common;
-using Newtonsoft.Json.Linq;
-using System.Data.SqlTypes;
-using System.Reflection;
 
 namespace Sushi.Kql.Mapping;
 
@@ -12,7 +9,7 @@ namespace Sushi.Kql.Mapping;
 public static class ResultMapper
 {
     /// <summary>
-    /// Maps all rows found in the first resultset of <paramref name="reader"/> to a collectiobn of objects of type <typeparamref name="T"/> using the provided <paramref name="map"/>.            
+    /// Maps all rows found in the first resultset of <paramref name="reader"/> to a collection of objects of type <typeparamref name="T"/> using the provided <paramref name="map"/>.            
     /// </summary>    
     public static QueryResult<T> MapToMultipleResults<T>(IDataReader reader, DataMap<T> map)
     {
@@ -26,6 +23,16 @@ public static class ResultMapper
         }
 
         return new QueryResult<T>() { Data = result };
+    }
+
+    /// <summary>
+    /// Maps a single data record to an object of type <typeparamref name="T"/> using the provided <paramref name="map"/>.   
+    /// </summary>
+    public static T MapRecordToObject<T>(IDataRecord record, DataMap<T> map)
+    {
+        T instance = (T)Activator.CreateInstance(typeof(T), true)!;
+        SetResultValuesToObject(record, map, instance);
+        return instance;
     }
 
     internal static void SetResultValuesToObject<T, TResult>(IDataRecord reader, DataMap<T> map, TResult instance)
@@ -58,5 +65,5 @@ public static class ResultMapper
         }
     }
 
-    
+
 }

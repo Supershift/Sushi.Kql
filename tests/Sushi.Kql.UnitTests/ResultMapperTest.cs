@@ -147,6 +147,53 @@ public class ResultMapperTest
         Assert.Throws<ArgumentNullException>(() => ResultMapper.SetResultValuesToObject(mockReader, dataMap!, instance));
     }
 
+    [Fact]
+    public void MapRecordToObject()
+    {
+        var dateTimeFormat = "yyyy-MM-ddTHH:mm:ssZ";
+        var earthquake = new Earthquake()
+        {
+            Timestamp = DateTime.ParseExact("2025-04-15T11:22:33Z", dateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None),
+            Magnitude = 5.1f,
+            DepthInMeters = 10000,
+            Location = new Location()
+            {
+                Latitude = 16.772f,
+                Longitude = 23.430f
+            },
+            ReadOnlyLongitude = 23.430f
+        };
+        var earthquake2 = new Earthquake()
+        {
+            Timestamp = DateTime.ParseExact("2025-04-15T10:54:20Z", dateTimeFormat, CultureInfo.InvariantCulture, DateTimeStyles.None),
+            Magnitude = 2.7f,
+            DepthInMeters = 32900,
+            Location = new Location()
+            {
+                Latitude = 19.276f,
+                Longitude = 155.399f
+            },
+            ReadOnlyLongitude = 23.430f
+        };
+
+
+        // Arrange
+        var rows = new List<Dictionary<string, object?>>
+        {
+            new() { { "Timestamp", earthquake.Timestamp }, { "Magnitude", earthquake.Magnitude }, { "DepthInMeters", earthquake.DepthInMeters }, { "Latitude", earthquake.Location.Latitude }, { "Longitude", earthquake.Location.Longitude } },
+            new() { { "Timestamp", earthquake2.Timestamp }, { "Magnitude", earthquake2.Magnitude }, { "DepthInMeters", earthquake2.DepthInMeters }, { "Latitude", earthquake2.Location.Latitude }, { "Longitude", earthquake2.Location.Longitude } },
+        };
+        var mockReader = new MockDataReader(rows);
+        var dataMap = new EarthquakeMap();
+        mockReader.Read();
+
+        // Act
+        var result = ResultMapper.MapRecordToObject(mockReader, dataMap);
+
+        // Assert result
+        Assert.NotNull(result);
+    }
+
     public class EarthquakeMap : DataMap<Earthquake>
     {
         public EarthquakeMap()

@@ -102,6 +102,16 @@ public class QueryBuilder<T> : IQueryBuilder
     }
 
     /// <summary>
+    /// Limits the results to a specified number of rows.
+    /// </summary>        
+    /// <returns></returns>
+    public void Top(int numberOfRows, Expression<Func<T, object?>> column, SortDirection? sortDirection = null)
+    {
+        var dataMapItem = _map.GetItem(column);
+        Top(numberOfRows, dataMapItem.Column, sortDirection);
+    }
+
+    /// <summary>
     /// Binds a name to all previous input in the query, allowing it to be referenced later in the query by the name.
     /// </summary>
     /// <param name="name"></param>
@@ -197,6 +207,15 @@ public class QueryBuilder<T> : IQueryBuilder
     {
         _builder.AppendLine();
         _builder.Append($"| take {numberOfRows}");
+    }
+
+    /// <summary>
+    /// Triggers the query side-effect with actually returning the results back to the client.
+    /// </summary>
+    public void Consume()
+    {
+        _builder.AppendLine();
+        _builder.Append($"| consume");
     }
 
 
