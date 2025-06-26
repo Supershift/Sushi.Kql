@@ -12,7 +12,8 @@ public class SummarizeBuilder<T>
 {
     private readonly DataMap<T> _map;
     private readonly StringBuilder _builder;
-    private readonly ParameterCollection _parameters;    
+    private readonly ParameterCollection _parameters;
+    private bool isFirst = true;
 
     internal SummarizeBuilder(DataMap<T> map, StringBuilder builder, ParameterCollection parameters)
     {
@@ -23,21 +24,38 @@ public class SummarizeBuilder<T>
     }
 
     /// <summary>
-    /// Adds the aggregation to summarize to the statement.
+    /// Adds custom kql to the Summarize statement.
+    /// </summary>    
+    public SummarizeBuilder<T> Agg(string kql)
+    {
+        if (!isFirst)
+        {
+            _builder.Append(", ");            
+        }
+        else
+        {
+            isFirst = false;
+        }
+
+        _builder.Append(kql);        
+
+        return this;
+    }
+
+    /// <summary>
+    /// Adds the aggregations to summarize to the statement.
     /// </summary>    
     public SummarizeBuilder<T> Agg(params IAggregationFunction[] on)
     {
         for (int i = 0; i < on.Length; i++)
-        {
-            if (i > 0)
-                _builder.Append(", ");
-            _builder.Append(on[i].ToKql(_parameters));
+        {   
+            Agg(on[i].ToKql(_parameters));
         }
         return this;
     }
 
     /// <summary>
-    /// Adds the aggregation to summarize to the statement.
+    /// Adds an aggregation to summarize to the statement.
     /// </summary>
     public SummarizeBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction> on)
     {
@@ -45,7 +63,7 @@ public class SummarizeBuilder<T>
     }
 
     /// <summary>
-    /// Adds the aggregation to summarize to the statement.
+    /// Adds the aggregations to summarize to the statement.
     /// </summary>
     public SummarizeBuilder<T> Agg(Func<AggregateFactory<T>, IAggregationFunction[]> on)
     {
