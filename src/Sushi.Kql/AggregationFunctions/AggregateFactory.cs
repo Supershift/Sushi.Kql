@@ -34,6 +34,42 @@ public class AggregateFactory<T>
     }
 
     /// <summary>
+    /// Arbitrarily chooses one record for each group in a summarize operator, and returns the value of one or more expressions over each such record.
+    /// </summary>
+    public IAggregationFunction TakeAny(Expression<Func<T, object?>> expression, string? alias = null)
+    {
+        var mapItem = _map.GetItem(expression);
+        
+        return new TakeAnyFunction([(mapItem.Column, alias)]);
+    }
+
+    /// <summary>
+    /// Arbitrarily chooses one record for each group in a summarize operator, and returns the value of one or more expressions over each such record.
+    /// </summary>
+    public IAggregationFunction TakeAny(Expression<Func<T, object?>>[] expressions)
+    {        
+        var columns = new (string, string?)[expressions.Length];
+        for (int i = 0; i < expressions.Length; i++)
+        {
+            columns[i] = (_map.GetItem(expressions[i]).Column, null);
+        }
+        return new TakeAnyFunction(columns);
+    }
+
+    /// <summary>
+    /// Arbitrarily chooses one record for each group in a summarize operator, and returns the value of one or more expressions over each such record.
+    /// </summary>
+    public IAggregationFunction TakeAny((Expression<Func<T, object?>> Expression, string? Alias)[] expressions)
+    {
+        var columns = new (string, string?)[expressions.Length];
+        for (int i = 0; i < expressions.Length; i++)
+        {
+            columns[i] = (_map.GetItem(expressions[i].Expression).Column, expressions[i].Alias);
+        }
+        return new TakeAnyFunction(columns);
+    }
+
+    /// <summary>
     /// Sums the values of the specified expression.
     /// </summary>    
     public IAggregationFunction Sum(Expression<Func<T, object?>> on, string? alias)

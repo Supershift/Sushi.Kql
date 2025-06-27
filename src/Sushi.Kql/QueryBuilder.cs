@@ -14,8 +14,7 @@ namespace Sushi.Kql;
 public class QueryBuilder<T> : IQueryBuilder
 {
     private readonly DataMap<T> _map;
-    private readonly StringBuilder _builder;
-    private readonly ParameterCollection _parameters;
+    private readonly StringBuilder _builder;    
 
     /// <summary>
     /// Creates a new instance of <see cref="QueryBuilder{T}"/> using the map's table name.
@@ -36,9 +35,14 @@ public class QueryBuilder<T> : IQueryBuilder
         ArgumentNullException.ThrowIfNull(tableName);
         _map = map;
         _builder = builder;
-        _parameters = parameters;
+        Parameters = parameters;
         builder.Append(tableName);
     }
+
+    /// <summary>
+    /// Gets the parameters used in the query.
+    /// </summary>
+    public ParameterCollection Parameters { get; }
 
     /// <summary>
     /// Gets the map used in the query builder.
@@ -66,7 +70,7 @@ public class QueryBuilder<T> : IQueryBuilder
     public WhereBuilder<T> Where()
     {
         _builder.AppendLine();
-        return new WhereBuilder<T>(_map, _builder, _parameters);
+        return new WhereBuilder<T>(_map, _builder, Parameters);
     }
 
     /// <summary>
@@ -76,7 +80,7 @@ public class QueryBuilder<T> : IQueryBuilder
     public SelectBuilder<T> Select()
     {
         _builder.AppendLine();
-        return new SelectBuilder<T>(_map, _builder, _parameters);
+        return new SelectBuilder<T>(_map, _builder, Parameters);
     }
 
     /// <summary>
@@ -86,7 +90,7 @@ public class QueryBuilder<T> : IQueryBuilder
     public SummarizeBuilder<T> Summarize()
     {
         _builder.AppendLine();
-        return new SummarizeBuilder<T>(_map, _builder, _parameters);
+        return new SummarizeBuilder<T>(_map, _builder, Parameters);
     }
 
     /// <summary>
@@ -134,7 +138,7 @@ public class QueryBuilder<T> : IQueryBuilder
         string tableName = queryBuilderTableName ?? _map.TableName!;
 
         // create new querybuilder for the union, passing the existing parametercollection to keep those parameters unique
-        var qb = new QueryBuilder<T>(_map, new StringBuilder(), _parameters, tableName);
+        var qb = new QueryBuilder<T>(_map, new StringBuilder(), Parameters, tableName);
 
         // call unionBuilder action
         queryBuilder(qb);
@@ -171,9 +175,9 @@ public class QueryBuilder<T> : IQueryBuilder
     public string ToKqlString(bool declareParameters = true)
     {
         // add parameters
-        if (declareParameters && _parameters.Count > 0)
+        if (declareParameters && Parameters.Count > 0)
         {
-            var parameters = _parameters.GetParameters();
+            var parameters = Parameters.GetParameters();
             var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
             _builder.Insert(0, $"declare query_parameters({stringified});{Environment.NewLine}");
         }
@@ -186,7 +190,7 @@ public class QueryBuilder<T> : IQueryBuilder
     /// <returns></returns>
     public Dictionary<string, string> GetParameters()
     {
-        return _parameters.GetParameters().ToDictionary(x => x.Name, x => x.Value);
+        return Parameters.GetParameters().ToDictionary(x => x.Name, x => x.Value);
     }
 
     /// <summary>
