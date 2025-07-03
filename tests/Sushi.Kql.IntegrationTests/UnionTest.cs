@@ -26,8 +26,8 @@ public class UnionTest
         qb.Summarize().Agg(a => [a.Count("ItemsSold"), a.DCount(x => x.ProductKey, "ProductsSold")]).By(x => x.CustomerKey);
         qb.Union(ub =>
         {   
-            ub.AddUnion(query1 => query1.Summarize().Agg(a => a.Count("ItemsSold")), aliasBase);
-            ub.AddUnion(query2 => query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")), aliasBase);
+            ub.AddUnion(aliasBase, query1 => query1.Summarize().Agg(a => a.Count("ItemsSold")));
+            ub.AddUnion(aliasBase, query2 => query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")));
         });
 
         // act
@@ -61,9 +61,10 @@ public class UnionTest
         qb.As(summed);
         qb.Union(ub =>
         {
-            ub.AddUnion(query1 => { query1.Summarize().Agg(a => a.Count("ItemsSold")); query1.As(union1); }, aliasBase);
-            ub.AddUnion(query2 => { query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")); query2.As(union2); }, aliasBase);
-        }, sourceColumnName);
+            ub.WithSourceName(sourceColumnName);
+            ub.AddUnion(aliasBase, query1 => { query1.Summarize().Agg(a => a.Count("ItemsSold")); query1.As(union1); });
+            ub.AddUnion(aliasBase, query2 => { query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")); query2.As(union2); });
+        });
 
         // act
         var reader = await _queryClient.ExecuteQueryAsync(qb, "ContosoSales");
