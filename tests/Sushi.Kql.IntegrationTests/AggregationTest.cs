@@ -12,6 +12,43 @@ public class AggregationTest
     }
 
     [Fact]
+    public async Task Avg()
+    {
+        // arrange
+        var map = new SalesFactMap();
+        var qb = new QueryBuilder<SalesFact>(map);
+
+        qb.Summarize().Agg(x => x.Avg(x => x.TotalCost));
+
+        // act
+        var reader = await _queryClient.ExecuteQueryAsync(qb, "ContosoSales");
+        reader.Read();
+        var result = reader.GetDouble(0);
+
+        // assert        
+        Assert.Equal(139, result);
+    }
+
+    [Fact]
+    public async Task Avg_WithDecimalPoint()
+    {
+        // arrange
+        var map = new SalesFactMap();
+        var qb = new QueryBuilder<SalesFact>(map);
+
+        qb.Summarize().Agg(x => x.Avg(x => x.TotalCost, roundingPrecision: 2));
+
+        // act
+        var reader = await _queryClient.ExecuteQueryAsync(qb, "ContosoSales");
+        reader.Read();
+        var result = reader.GetDouble(0);
+
+        // assert
+        // The expected value is 139.33, but due to floating point precision, it may not match exactly.
+        Assert.Equal(139.33000000000001, result);
+    }
+
+    [Fact]
     public async Task TakeAny()
     {
         // arrange
