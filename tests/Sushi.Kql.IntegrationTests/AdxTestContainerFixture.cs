@@ -21,9 +21,14 @@ public class AdxTestContainerFixture : IAsyncLifetime
 
     public ICslQueryProvider GetQueryProvider()
     {
-        var client = KustoClientFactory.CreateCslQueryProvider(_kustoContainer.GetConnectionString());
-        client.DefaultDatabaseName = DatabaseName;
-        return client;
+        var provider = KustoClientFactory.CreateCslQueryProvider(_kustoContainer.GetConnectionString());
+        provider.DefaultDatabaseName = DatabaseName;
+        return provider;
+    }
+
+    public QueryClient GetQueryClient()
+    {
+        return new QueryClient(GetQueryProvider());
     }
 
     public async Task DisposeAsync()
