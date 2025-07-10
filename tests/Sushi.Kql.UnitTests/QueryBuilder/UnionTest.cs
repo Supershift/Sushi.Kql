@@ -21,11 +21,8 @@ public class UnionTest
         _qb.Where().Equals(x => x.ProductKey, 2023);
         _qb.As(alias, true);
         _qb.Summarize().Agg(a => a.Count("ItemsSold")).By(x => x.CustomerKey);
-        _qb.Union(u =>
-        {
-            u.Summarize().Agg(a => a.Count("ItemsSold"));
-        },
-        queryBuilderTableName: alias);
+        _qb.Union(ub => ub.AddUnion(alias, q => q.Summarize().Agg(a => a.Count("ItemsSold"))));
+        
 
         var kqlQuery = _qb.ToKqlString();
 
@@ -48,12 +45,10 @@ SalesFact
         _qb.Where().Equals(x => x.ProductKey, 2023);
         _qb.As(alias, true);
         _qb.Summarize().Agg(a => a.Count("ItemsSold")).By(x => x.CustomerKey);
-        _qb.Union(u =>
-        {
-            u.Summarize().Agg(a => a.Count("ItemsSold"));
-        },
-        queryBuilderTableName: alias,
-        withsourceName: sourceColumnName);
+        _qb.Union(ub => {
+            ub.WithSourceName(sourceColumnName);
+            ub.AddUnion(alias, q => q.Summarize().Agg(a => a.Count("ItemsSold")));
+        });
 
         var kqlQuery = _qb.ToKqlString();
 

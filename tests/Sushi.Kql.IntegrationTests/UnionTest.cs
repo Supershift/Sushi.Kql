@@ -20,59 +20,75 @@ public class UnionTest
         var map = new SalesFactMap();
         var qb = new QueryBuilder<SalesFact>(map);
 
-        string alias = "FilteredSales";
+        string aliasBase = "FilteredSales";                
         qb.Where().Equals(x => x.ProductKey, 2023);
-        qb.As(alias, true);
-        qb.Summarize().Agg(a => a.Count("ItemsSold")).By(x => x.CustomerKey);
-        qb.Union(u =>
-        {
-            u.Summarize().Agg(a => a.Count("ItemsSold"));
-        },
-        queryBuilderTableName: alias);
+        qb.As(aliasBase, true);
+        qb.Summarize().Agg(a => [a.Count("ItemsSold"), a.DCount(x => x.ProductKey, "ProductsSold")]).By(x => x.CustomerKey);
+        qb.Union(ub =>
+        {   
+            ub.AddUnion(aliasBase, query1 => query1.Summarize().Agg(a => a.Count("ItemsSold")));
+            ub.AddUnion(aliasBase, query2 => query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")));
+        });
 
         // act
         var reader = await _queryClient.ExecuteQueryAsync(qb, "ContosoSales");
         int rowCount = 0;
         while (reader.Read())
         {
-            rowCount++;
+            rowCount++;            
         }
 
         // assert
-        Assert.Equal(2, reader.FieldCount);
-        Assert.Equal(4, rowCount);
+        Assert.Equal(3, reader.FieldCount);
+        Assert.Equal(5, rowCount);
     }
 
     [Fact]
-    public async Task SummarizeAndUnionOnTotal_WithSourcename()
+    public async Task SummarizeAndUnionOnTotal_WithSourceName()
     {
         // arrange
         var map = new SalesFactMap();
         var qb = new QueryBuilder<SalesFact>(map);
 
-        string alias = "FilteredSales";
-        string sourceColumnName = "Source";
+        const string aliasBase = "FilteredSales";
+        const string summed = "Summed";
+        const string union1 = "Union1";
+        const string union2 = "Union2";
+        const string sourceColumnName = "SourceColumn";
         qb.Where().Equals(x => x.ProductKey, 2023);
-        qb.As(alias, true);
-        qb.Summarize().Agg(a => a.Count("ItemsSold")).By(x => x.CustomerKey);
-        qb.Union(u =>
+        qb.As(aliasBase, true);
+        qb.Summarize().Agg(a => [a.Count("ItemsSold"), a.DCount(x => x.ProductKey, "ProductsSold")]).By(x => x.CustomerKey);
+        qb.As(summed);
+        qb.Union(ub =>
         {
-            u.Summarize().Agg(a => a.Count("ItemsSold"));
-        },
-        queryBuilderTableName: alias,
-        withsourceName: sourceColumnName);
+            ub.WithSourceName(sourceColumnName);
+            ub.AddUnion(aliasBase, query1 => { query1.Summarize().Agg(a => a.Count("ItemsSold")); query1.As(union1); });
+            ub.AddUnion(aliasBase, query2 => { query2.Summarize().Agg(a => a.DCount(x => x.ProductKey, "ProductsSold")); query2.As(union2); });
+        });
 
         // act
         var reader = await _queryClient.ExecuteQueryAsync(qb, "ContosoSales");
         int rowCount = 0;
+        bool hasSummed = false;
+        bool hasUnion1Alias = false;
+        bool hasUnion2Alias = false;
+        int sourceColumnIndex = reader.GetOrdinal(sourceColumnName);
         while (reader.Read())
         {
             rowCount++;
+            switch (reader.GetString(sourceColumnIndex))
+            {
+                case summed: hasSummed = true; break;
+                case union1: hasUnion1Alias = true; break;
+                case union2: hasUnion2Alias = true; break;
+            }
         }
 
         // assert
-        Assert.Equal(3, reader.FieldCount);
-        Assert.Equal(sourceColumnName, reader.GetName(0));
-        Assert.Equal(4, rowCount);
+        Assert.Equal(4, reader.FieldCount);
+        Assert.Equal(5, rowCount);
+        Assert.True(hasSummed);
+        Assert.True(hasUnion1Alias);
+        Assert.True(hasUnion2Alias);
     }
 }
