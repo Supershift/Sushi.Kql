@@ -28,7 +28,7 @@ public class QueryClientTest
         var queryBuilder = new QueryBuilder<SalesFact>(_map);
 
         var client = new QueryClient(_cslQueryProvider);
-
+        
         // act
         using var reader = await client.ExecuteQueryAsync(queryBuilder, "ContosoSales", CancellationToken.None);
         int count = 0;

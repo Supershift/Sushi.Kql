@@ -15,6 +15,7 @@ public class QueryBuilder<T> : IQueryBuilder
 {
     private readonly DataMap<T> _map;
     private readonly StringBuilder _builder;    
+    private RestrictBuilder<T>? _restrictBuilder = null; 
 
     /// <summary>
     /// Creates a new instance of <see cref="QueryBuilder{T}"/> using the map's table name.
@@ -43,6 +44,7 @@ public class QueryBuilder<T> : IQueryBuilder
     /// Gets the parameters used in the query.
     /// </summary>
     public ParameterCollection Parameters { get; }
+    
 
     /// <summary>
     /// Gets the map used in the query builder.
@@ -51,6 +53,22 @@ public class QueryBuilder<T> : IQueryBuilder
     public DataMap<T> GetMap()
     {
         return _map;
+    }
+
+    /// <summary>
+    /// Restrict access to the resources provided as parameter.
+    /// </summary>    
+    public QueryBuilder<T> RestrictAccessTo(Action<RestrictBuilder<T>> restrictBuilder)
+    {
+        // can only have one restrict statement in a query
+        if (_restrictBuilder != null)
+            throw new InvalidOperationException("A query can only have one restrict statement.");
+
+        // build the restrict statement
+        _restrictBuilder = new RestrictBuilder<T>(_map);
+        restrictBuilder(_restrictBuilder);
+
+        return this;
     }
 
     /// <summary>
@@ -162,14 +180,23 @@ public class QueryBuilder<T> : IQueryBuilder
     /// <inheritdoc />
     public string ToKqlString(bool declareParameters = true)
     {
-        // add parameters
+        // declare parameters
         if (declareParameters && Parameters.Count > 0)
         {
             var parameters = Parameters.GetParameters();
             var stringified = string.Join(", ", parameters.Select(x => $"{x.Name}:{x.Type}"));
             _builder.Insert(0, $"declare query_parameters({stringified});{Environment.NewLine}");
         }
-        return _builder.ToString();
+        // if we have a restrict statement, combine it with the main query
+        string result = _builder.ToString();
+
+        // add restrict statement to the query
+        if (_restrictBuilder != null)
+        {   
+            result = _restrictBuilder.ToKql() + result;
+        }
+
+        return result;
     }
 
     /// <summary>
@@ -178,7 +205,13 @@ public class QueryBuilder<T> : IQueryBuilder
     /// <returns></returns>
     public Dictionary<string, string> GetParameters()
     {
-        return Parameters.GetParameters().ToDictionary(x => x.Name, x => x.Value);
+        // combine all parameters
+        var allParameters = new List<Parameter>(Parameters.GetParameters());
+        if (_restrictBuilder != null)
+        {
+            allParameters.AddRange(_restrictBuilder.Parameters.GetParameters());
+        }        
+        return allParameters.ToDictionary(x => x.Name, x => x.Value);
     }
 
     /// <summary>

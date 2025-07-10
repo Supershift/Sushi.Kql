@@ -13,6 +13,9 @@ public class QueryBuilderProvider
 {
     private readonly DataMapProvider _dataMapProvider;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="QueryBuilderProvider"/>.
+    /// </summary>    
     public QueryBuilderProvider(DataMapProvider dataMapProvider)
     {
         _dataMapProvider = dataMapProvider;
@@ -27,5 +30,17 @@ public class QueryBuilderProvider
     {
         var map = _dataMapProvider.GetMapForType<T>();
         return new QueryBuilder<T>(map);
+    }
+
+    /// <summary>
+    /// Gets an instance of <see cref="QueryBuilder{T}"/> to execute against <paramref name="tableName"/>.
+    /// </summary>
+    /// <param name="tableName"></param>
+    /// <typeparam name="T"></typeparam>
+    /// <returns></returns>
+    public QueryBuilder<T> GetBuilder<T>(string tableName)
+    {
+        var map = _dataMapProvider.GetMapForType<T>();
+        return new QueryBuilder<T>(map, tableName);
     }
 }

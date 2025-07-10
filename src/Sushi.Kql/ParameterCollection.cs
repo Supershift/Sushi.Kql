@@ -12,8 +12,19 @@ namespace Sushi.Kql
     public class ParameterCollection
     {
         private readonly Dictionary<string, Parameter> _parameters = [];
+        private readonly string _parameterPrefix;
 
         public int Count => _parameters.Count;
+
+        public ParameterCollection() : this("p")
+        {
+            
+        }
+
+        public ParameterCollection(string parameterPrefix)
+        {
+            _parameterPrefix = parameterPrefix;
+        }
 
         public string Add<T>(T? value)
         {
@@ -23,7 +34,7 @@ namespace Sushi.Kql
 
         public string Add(KqlDataType kqlDataType, object? value)
         {
-            string parameterName = $"p{_parameters.Keys.Count}";
+            string parameterName = $"{_parameterPrefix}{_parameters.Keys.Count}";
             var parameter = new Parameter(kqlDataType, parameterName, value);
             _parameters.Add(parameter.Name, parameter);
 

@@ -13,7 +13,7 @@ namespace Sushi.Kql;
 /// <summary>
 /// Executes KQL queries against a Kusto database.
 /// </summary>
-public class QueryClient
+public class QueryClient : IQueryClient
 {
     private readonly ICslQueryProvider _client;
 
@@ -36,12 +36,12 @@ public class QueryClient
         var properties = new ClientRequestProperties();
         if (parameters.Count > 0)
             properties.SetParameters(parameters);
-
+        
         try
         {
             return await _client.ExecuteQueryAsync(database, kqlQuery, properties, cancellationToken);
         }
-        catch(Exception ex)
+        catch (Exception ex)
         {
             throw new QueryExecutionException(kqlQuery, ex);
         }

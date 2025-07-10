@@ -1,6 +1,8 @@
-﻿
-namespace Sushi.Kql;
+﻿namespace Sushi.Kql;
 
+/// <summary>
+/// Defines an interface to build Kusto Query Language (KQL) queries.
+/// </summary>
 public interface IQueryBuilder
 {
     /// <summary>
@@ -9,5 +11,10 @@ public interface IQueryBuilder
     /// <returns></returns>
     /// <param name="declareParameters">If true, 'declare query_parameters' is added to beginning of query.</param>
     string ToKqlString(bool declareParameters = true);
+
+    /// <summary>
+    /// Gets the parameters used in the query.
+    /// </summary>
+    /// <returns></returns>
     Dictionary<string, string> GetParameters();
 }
