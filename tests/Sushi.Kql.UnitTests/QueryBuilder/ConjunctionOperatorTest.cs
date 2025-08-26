@@ -1,6 +1,6 @@
 ﻿namespace Sushi.Kql.UnitTests.QueryBuilder;
 
-public class ConjunctionOperator
+public class ConjunctionOperatorTest
 {
     [Fact]
     public void WhereClause_WithMultipleAndConditions_DefaultJoinsWithAnd()
