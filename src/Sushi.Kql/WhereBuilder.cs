@@ -26,12 +26,34 @@ namespace Sushi.Kql
         }
 
         /// <summary>
-        /// Adds an equality check to the query, e.g. where column == value.
-        /// </summary>        
-        public WhereBuilder<T> Equals(Expression<Func<T, object?>> mappingExpression, object? value)
+        /// Constructor used for creating nested  builders
+        /// </summary>
+        private WhereBuilder(DataMap<T> map, ParameterCollection parameters)
         {
-            return Add(mappingExpression, value, ComparisonOperator.Equals);
+            _map = map;
+            _parameters = parameters;
+            _builder = new StringBuilder(); // don't use query's builder
         }
+
+        /// <summary>
+        /// Adds an equality check to the query, e.g. where column == value.
+        /// </summary>
+        public WhereBuilder<T> Equals(Expression<Func<T, object?>> mappingExpression, object? value, ConjunctionOperator conjunctionOperator = ConjunctionOperator.And)
+        {
+            return Add(mappingExpression, value, ComparisonOperator.Equals, conjunctionOperator);
+        }
+
+        /// <summary>
+        /// Adds a nested nested condition to the where, e.g. where (column1 == value1 or column2 == value2).
+        /// </summary>
+        public WhereBuilder<T> Nested(Func<WhereBuilder<T>, WhereBuilder<T>> nestedBuilder, ConjunctionOperator conjunctionOperator = ConjunctionOperator.And)
+        {
+            var inner = new WhereBuilder<T>(_map, _parameters); // create inner where builder which doesnt start with "| where "
+            nestedBuilder(inner);
+
+            return AddKql($"({inner._builder})", conjunctionOperator);
+        }
+
 
         /// <summary>
         /// Adds a between predicate to the query, e.g. where column between (from..to).
@@ -51,31 +73,34 @@ namespace Sushi.Kql
         /// <summary>
         /// Adds a predicate to the query, based on the specified comparison operator.
         /// </summary>        
-        public WhereBuilder<T> Add(Expression<Func<T, object?>> mappingExpression, object? value, ComparisonOperator comparisonOperator)
+        public WhereBuilder<T> Add(Expression<Func<T, object?>> mappingExpression, object? value, ComparisonOperator comparisonOperator, ConjunctionOperator conjunctionOperator = ConjunctionOperator.And)
         {
             var dataproperty = _map.GetItem(mappingExpression);
 
-            return Add(dataproperty.Column, dataproperty.DataType, value, comparisonOperator);
+            return Add(dataproperty.Column, dataproperty.DataType, value, comparisonOperator, conjunctionOperator);
         }
 
         /// <summary>
         /// Adds a predicate to the query, based on the specified comparison operator.
         /// </summary>        
-        public WhereBuilder<T> Add(string expression, object value, ComparisonOperator comparisonOperator)
+        public WhereBuilder<T> Add(string expression, object value, ComparisonOperator comparisonOperator, ConjunctionOperator conjunctionOperator = ConjunctionOperator.And)
         {
             var kqlType = Conversion.GetKqlDataType(value.GetType());
-            return Add(expression, kqlType, value, comparisonOperator);
+            return Add(expression, kqlType, value, comparisonOperator, conjunctionOperator);
         }
 
         /// <summary>
         /// Adds custom KQL to the query.
         /// </summary>
         /// <param name="customKql"></param>
+        /// <param name="conjunctionOperator"></param>
         /// <returns></returns>
-        public WhereBuilder<T> AddKql(string customKql)
+        public WhereBuilder<T> AddKql(string customKql, ConjunctionOperator conjunctionOperator = ConjunctionOperator.And)
         {
             if (_isFirst)
                 _isFirst = false;
+            else if (conjunctionOperator == ConjunctionOperator.Or)
+                _builder.Append(" or ");
             else
                 _builder.Append(" and ");
 
@@ -83,11 +108,11 @@ namespace Sushi.Kql
             return this;
         }
 
-        private WhereBuilder<T> Add(string column, KqlDataType sqlType, object? value, ComparisonOperator comparisonOperator)
+        private WhereBuilder<T> Add(string column, KqlDataType sqlType, object? value, ComparisonOperator comparisonOperator, ConjunctionOperator conjunctionOperator)
         {
             if (comparisonOperator == ComparisonOperator.In)
             {
-                return AddWhereIn(column, sqlType, value);
+                return AddWhereIn(column, sqlType, value, conjunctionOperator);
             }
             else
             {
@@ -101,11 +126,11 @@ namespace Sushi.Kql
                     ComparisonOperator.LessThan => "<",
                     _ => throw new ArgumentException($"{comparisonOperator} not yet supported", nameof(comparisonOperator)),
                 };
-                return AddKql($"{column} {operatorSymbol} {parameterName}");
+                return AddKql($"{column} {operatorSymbol} {parameterName}", conjunctionOperator);
             }
         }
 
-        private WhereBuilder<T> AddWhereIn(string column, KqlDataType sqlType, object? value)
+        private WhereBuilder<T> AddWhereIn(string column, KqlDataType sqlType, object? value, ConjunctionOperator conjunctionOperator)
         {
             if (value is not IEnumerable items)
             {
@@ -122,13 +147,29 @@ namespace Sushi.Kql
             if (whereInParameters.Count > 0)
             {
                 var whereInValueString = string.Join(",", whereInParameters);
-                return AddKql($"{column} in ({whereInValueString})");
+                return AddKql($"{column} in ({whereInValueString})", conjunctionOperator);
             }
             else
             {
                 // make sure to return no results if an empty where in is used.
-                return AddKql($"1 == 0");
+                return AddKql($"1 == 0", conjunctionOperator);
             }
         }
+    }
+
+    /// <summary>
+    /// Represents how multiple conditions are combined.
+    /// </summary>
+    public enum ConjunctionOperator
+    {
+        /// <summary>
+        /// Combines conditions using the logical AND operator.
+        /// </summary>
+        And,
+
+        /// <summary>
+        /// Combines conditions using the logical OR operator.
+        /// </summary>
+        Or
     }
 }

@@ -12,13 +12,13 @@ namespace Sushi.Kql.IntegrationTests;
 public class RestrictedBuilderTest
 {
     private readonly QueryClient _queryClient;
-    private readonly SalesFactMap _map;    
+    private readonly SalesFactMap _map;
 
     public RestrictedBuilderTest(AdxTestContainerFixture fixture)
     {
         _queryClient = fixture.GetQueryClient();
         _map = new SalesFactMap();
-        
+
     }
 
     [Fact]
@@ -49,6 +49,6 @@ public class RestrictedBuilderTest
         var act = async () => _ = await _queryClient.GetAllAsync(query, "ContosoSales");
 
         var ex = await Assert.ThrowsAsync<Sushi.Kql.Exceptions.QueryExecutionException>(act);
-        _ = Assert.IsType<SemanticException>(ex.InnerException);        
+        _ = Assert.IsType<SemanticException>(ex.InnerException);
     }
 }
