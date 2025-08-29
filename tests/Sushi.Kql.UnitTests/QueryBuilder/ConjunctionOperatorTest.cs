@@ -8,7 +8,7 @@ public class ConjunctionOperatorTest
         var qb = new QueryBuilder<SalesFact>(new SalesFactMap());
 
         var where = qb.Where();
-        where.Add(x => x.ProductKey, 2023, ComparisonOperator.GreaterThan);
+        where.Equals(x => x.ProductKey, 2023);
         where.Add(x => x.SalesAmount, 100f, ComparisonOperator.GreaterThan);
         where.Add(x => x.TotalCost, 100f, ComparisonOperator.GreaterThan);
 
@@ -25,7 +25,7 @@ public class ConjunctionOperatorTest
         var qb = new QueryBuilder<SalesFact>(new SalesFactMap());
 
         var where = qb.Where();
-        where.Add(x => x.ProductKey, 2023, ComparisonOperator.GreaterThan);
+        where.Equals(x => x.ProductKey, 2023);
         where.Add(x => x.SalesAmount, 100f, ComparisonOperator.GreaterThan, Kql.ConjunctionOperator.Or);
 
         var kqlQuery = qb.ToKqlString();
